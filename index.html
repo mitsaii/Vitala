@@ -1,0 +1,2967 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Vitala — 症狀檢查 · Understand. Decide. Feel better.</title>
+<style>
+  :root {
+    --mint-50: #F2F8F5;
+    --mint-100: #E1F0EA;
+    --mint-200: #C5E2D7;
+    --mint-300: #9FCDBC;
+    --mint-400: #6FB39C;
+    --mint-500: #4F9985;
+    --mint-600: #3F7D6D;
+    --mint-700: #305F54;
+    --cream: #FAF7F0;
+    --ink-900: #1F2A28;
+    --ink-700: #43504D;
+    --ink-500: #6E7A77;
+    --ink-300: #A9B2B0;
+    --line: #E6EBE8;
+    --red: #D45B5B;
+    --red-bg: #FBEEEE;
+    --red-strong: #B83A3A;
+    --amber: #D9963F;
+    --amber-bg: #FBF3E4;
+    --amber-strong: #8B6020;
+    --green: #4F9985;
+    --green-bg: #E7F2ED;
+    --green-strong: #2E6E5B;
+    --shadow-sm: 0 1px 2px rgba(48,95,84,.06), 0 2px 8px rgba(48,95,84,.04);
+    --shadow-md: 0 4px 12px rgba(48,95,84,.08), 0 12px 32px rgba(48,95,84,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    background: var(--cream);
+    color: var(--ink-900);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  a { color: inherit; text-decoration: none; }
+  input, textarea { font-family: inherit; }
+
+  .app {
+    max-width: 480px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background: var(--cream);
+    position: relative;
+    box-shadow: 0 0 60px rgba(48,95,84,0.04);
+    overflow: hidden;
+  }
+  .scroll-area { padding-bottom: 96px; }
+
+  /* ===== Top bar ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,247,240,0.92);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 10px;
+    min-height: 56px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; }
+  .brand-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--mint-300), var(--mint-500));
+    border-radius: 9px;
+    display: grid; place-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .brand-mark svg { width: 20px; height: 20px; }
+  .brand-name {
+    font-size: 19px; font-weight: 700; letter-spacing: -0.4px;
+    color: var(--mint-700);
+  }
+  .topbar .back {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--ink-700);
+    transition: background .15s;
+  }
+  .topbar .back:hover { background: var(--mint-100); }
+  .topbar .title {
+    font-size: 16px; font-weight: 600; color: var(--ink-900);
+    flex: 1;
+  }
+  .topbar .right {
+    font-size: 13px; color: var(--mint-600); font-weight: 600;
+    padding: 6px 10px; border-radius: 8px;
+  }
+
+  /* ===== Splash ===== */
+  .splash {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #DEEBE2 0%, #F2F8F5 50%, #E9F4ED 100%);
+    display: grid; place-items: center;
+    z-index: 200;
+    animation: splashOut .6s ease 1.4s forwards;
+  }
+  .splash-inner {
+    text-align: center; animation: splashIn .8s ease both;
+  }
+  .splash-logo {
+    width: 88px; height: 88px;
+    background: linear-gradient(135deg, var(--mint-300), var(--mint-500));
+    border-radius: 24px;
+    display: grid; place-items: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 12px 40px rgba(80,153,133,0.3);
+  }
+  .splash-logo svg { width: 52px; height: 52px; }
+  .splash-name {
+    font-size: 36px; font-weight: 700; letter-spacing: -1px;
+    color: var(--mint-700); margin-bottom: 6px;
+  }
+  .splash-tag {
+    font-size: 13px; color: var(--ink-500); letter-spacing: 0.5px;
+  }
+  @keyframes splashIn { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+  @keyframes splashOut { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+  /* ===== Onboarding ===== */
+  .onb {
+    min-height: 100vh; display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #F2F8F5 0%, var(--cream) 50%);
+    padding: 60px 28px 32px;
+  }
+  .onb-skip {
+    position: absolute; top: 18px; right: 20px;
+    color: var(--ink-500); font-size: 14px; font-weight: 500;
+    padding: 8px 14px; border-radius: 999px;
+  }
+  .onb-stage {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 8px;
+  }
+  .onb-icon {
+    width: 100px; height: 100px;
+    background: #fff;
+    border-radius: 32px;
+    display: grid; place-items: center;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(80,153,133,0.12);
+  }
+  .onb-icon svg { width: 52px; height: 52px; color: var(--mint-500); }
+  .onb h2 {
+    font-size: 24px; line-height: 1.4; color: var(--mint-700);
+    letter-spacing: -0.5px; margin-bottom: 12px;
+  }
+  .onb p {
+    font-size: 15px; color: var(--ink-700); line-height: 1.7;
+    max-width: 320px;
+  }
+  .onb-dots { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+  .onb-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--mint-200); transition: all .25s;
+  }
+  .onb-dots span.active { background: var(--mint-500); width: 22px; border-radius: 4px; }
+
+  .btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, var(--mint-500), var(--mint-600));
+    color: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px; font-weight: 600;
+    box-shadow: 0 4px 16px rgba(80,153,133,0.3);
+    transition: transform .12s, box-shadow .15s;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary.lg { padding: 18px; font-size: 17px; }
+  .btn-secondary {
+    width: 100%;
+    background: #fff;
+    color: var(--mint-700);
+    border: 1.5px solid var(--mint-200);
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 15px; font-weight: 600;
+  }
+  .btn-secondary:active { transform: scale(0.99); }
+  .btn-ghost {
+    width: 100%;
+    background: transparent; color: var(--ink-500);
+    padding: 12px; font-size: 14px;
+  }
+  .btn-danger {
+    width: 100%;
+    background: var(--red); color: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px; font-weight: 700;
+    box-shadow: 0 4px 16px rgba(212,91,91,0.3);
+  }
+
+  /* ===== Home ===== */
+  .home-hero {
+    padding: 28px 24px 24px;
+    background:
+      radial-gradient(120% 80% at 100% 0%, var(--mint-100) 0%, transparent 50%),
+      radial-gradient(80% 60% at 0% 100%, #EFF5E8 0%, transparent 60%);
+    border-bottom: 1px solid var(--line);
+  }
+  .home-hero h1 {
+    font-size: 26px; line-height: 1.3; letter-spacing: -0.5px;
+    color: var(--mint-700); font-weight: 700; margin-bottom: 6px;
+  }
+  .home-hero h1 small {
+    display: block; font-size: 13px; font-weight: 500;
+    color: var(--ink-500); letter-spacing: 0; margin-top: 4px;
+  }
+  .home-hero p {
+    color: var(--ink-700); font-size: 14px; margin-top: 10px;
+  }
+  .home-cta-wrap { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ===== Section ===== */
+  section.block { padding: 18px 20px 4px; }
+  .block-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .block-head h2 {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+    color: var(--ink-500); text-transform: uppercase;
+  }
+  .block-head a {
+    font-size: 13px; color: var(--mint-600); font-weight: 600;
+  }
+
+  /* ===== History on home ===== */
+  .history-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .hist-light {
+    width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  }
+  .hist-light.green { background: var(--green); }
+  .hist-light.amber { background: var(--amber); }
+  .hist-light.red { background: var(--red); }
+  .hist-text { flex: 1; min-width: 0; }
+  .hist-name { font-weight: 600; font-size: 14.5px; }
+  .hist-meta { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+
+  /* ===== Symptom list (browse) ===== */
+  .sym-list { display: flex; flex-direction: column; gap: 8px; }
+  .sym-item {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    text-align: left;
+    transition: border-color .15s, transform .12s;
+  }
+  .sym-item:active { transform: scale(0.99); }
+  .sym-item:hover { border-color: var(--mint-300); }
+  .sym-emoji {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--mint-100);
+    display: grid; place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .sym-text { flex: 1; min-width: 0; }
+  .sym-name { font-weight: 600; font-size: 15px; }
+  .sym-desc { font-size: 12.5px; color: var(--ink-500); margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sym-arrow { color: var(--ink-300); flex-shrink: 0; }
+
+  /* ===== Categories ===== */
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  .cat-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 14px;
+    text-align: left;
+    transition: border-color .15s, transform .12s;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .cat-card:active { transform: scale(0.98); }
+  .cat-icon {
+    width: 38px; height: 38px; border-radius: 11px;
+    background: var(--mint-100); color: var(--mint-600);
+    display: grid; place-items: center;
+  }
+  .cat-name { font-size: 15px; font-weight: 600; }
+  .cat-count { font-size: 12px; color: var(--ink-500); }
+
+  /* ===== Red-flag screen ===== */
+  .rf-wrap { padding: 24px 22px 20px; }
+  .rf-head {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--red-bg);
+    border: 1px solid #ECCACA;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .rf-head .ico {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .rf-head h3 { font-size: 16px; color: var(--red-strong); margin-bottom: 4px; }
+  .rf-head p { font-size: 13px; color: #6F4040; line-height: 1.6; }
+  .rf-list {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .rf-item {
+    padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+  }
+  .rf-item:last-child { border-bottom: 0; }
+  .rf-item .num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--red-bg); color: var(--red-strong);
+    font-size: 13px; font-weight: 700;
+    display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .rf-item .txt { font-size: 14.5px; color: var(--ink-900); line-height: 1.55; }
+  .rf-actions { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ===== Quiz ===== */
+  .quiz-progress {
+    height: 4px; background: var(--line);
+    position: sticky; top: 56px; z-index: 49;
+  }
+  .quiz-progress > span {
+    display: block; height: 100%;
+    background: linear-gradient(90deg, var(--mint-400), var(--mint-500));
+    transition: width .3s;
+  }
+  .quiz-wrap { padding: 28px 22px 24px; }
+  .quiz-step { font-size: 12.5px; color: var(--ink-500); margin-bottom: 8px; letter-spacing: 0.5px; }
+  .quiz-q {
+    font-size: 21px; line-height: 1.45; font-weight: 700;
+    color: var(--ink-900); letter-spacing: -0.3px; margin-bottom: 8px;
+  }
+  .quiz-hint {
+    font-size: 13.5px; color: var(--ink-500); line-height: 1.6; margin-bottom: 22px;
+  }
+  .opt-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .opt {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+    text-align: left;
+    font-size: 15px; font-weight: 500; color: var(--ink-900);
+    display: flex; align-items: center; gap: 14px;
+    transition: all .15s;
+  }
+  .opt:hover, .opt:focus { border-color: var(--mint-300); background: var(--mint-50); }
+  .opt.selected {
+    border-color: var(--mint-500); background: var(--mint-50);
+    box-shadow: 0 0 0 3px rgba(80,153,133,0.15);
+  }
+  .opt .check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--ink-300);
+    display: grid; place-items: center;
+    flex-shrink: 0; transition: all .15s;
+  }
+  .opt.selected .check {
+    background: var(--mint-500); border-color: var(--mint-500);
+  }
+  .opt.selected .check svg { color: #fff; opacity: 1; }
+  .opt .check svg { width: 14px; height: 14px; color: transparent; opacity: 0; transition: opacity .15s; }
+  .opt.multi .check { border-radius: 6px; }
+
+  .quiz-actions { display: flex; gap: 10px; }
+  .quiz-actions .btn-secondary { flex: 0 0 auto; width: auto; padding: 14px 22px; }
+  .quiz-actions .btn-primary { flex: 1; }
+
+  /* ===== Demographic chips ===== */
+  .demo-section { margin-bottom: 22px; }
+  .demo-label { font-size: 13px; color: var(--ink-500); margin-bottom: 10px; font-weight: 600; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-btn {
+    padding: 10px 16px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    font-size: 14px; font-weight: 500;
+    color: var(--ink-700);
+    transition: all .15s;
+  }
+  .chip-btn.selected {
+    background: var(--mint-500); color: #fff; border-color: var(--mint-500);
+  }
+
+  /* ===== Result page ===== */
+  .result-wrap { padding: 16px 20px 32px; }
+  .result-banner {
+    border-radius: 24px;
+    padding: 24px 22px 22px;
+    margin-bottom: 18px;
+    color: #fff;
+    position: relative; overflow: hidden;
+  }
+  .result-banner::before {
+    content: ""; position: absolute; right: -40px; top: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .result-banner::after {
+    content: ""; position: absolute; left: -30px; bottom: -50px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .result-banner.green { background: linear-gradient(135deg, #5FA48F, #3F7D6D); }
+  .result-banner.amber { background: linear-gradient(135deg, #E0A856, #B07626); }
+  .result-banner.red { background: linear-gradient(135deg, #DD6868, #B83A3A); }
+  .result-banner .light-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    position: relative; z-index: 1;
+  }
+  .result-banner .light-tag .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #fff;
+  }
+  .result-banner h1 {
+    font-size: 24px; line-height: 1.35; letter-spacing: -0.4px;
+    margin-bottom: 8px; position: relative; z-index: 1;
+  }
+  .result-banner p {
+    font-size: 14.5px; line-height: 1.65; opacity: 0.95;
+    position: relative; z-index: 1;
+  }
+
+  .result-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .result-card h3 {
+    font-size: 14.5px; font-weight: 700; color: var(--ink-900);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .result-card h3 .ico {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: var(--mint-100); color: var(--mint-600);
+    display: grid; place-items: center;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    background: var(--mint-100); color: var(--mint-700);
+    border: 1px solid var(--mint-200);
+    padding: 8px 14px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600;
+  }
+  .chip.alt { background: #fff; color: var(--ink-700); border-color: var(--line); }
+
+  .qlist { counter-reset: q; display: flex; flex-direction: column; gap: 10px; }
+  .qitem {
+    counter-increment: q;
+    background: var(--mint-50);
+    border: 1px solid var(--mint-200);
+    border-radius: 12px;
+    padding: 12px 14px 12px 44px;
+    position: relative;
+    font-size: 14px; line-height: 1.55;
+  }
+  .qitem::before {
+    content: counter(q);
+    position: absolute; left: 12px; top: 12px;
+    width: 24px; height: 24px;
+    background: var(--mint-500); color: #fff;
+    font-size: 12px; font-weight: 700;
+    border-radius: 50%;
+    display: grid; place-items: center;
+  }
+
+  ul.bullet { list-style: none; }
+  ul.bullet li {
+    position: relative; padding-left: 18px;
+    font-size: 14px; color: var(--ink-700); line-height: 1.7;
+  }
+  ul.bullet li::before {
+    content: ""; position: absolute; left: 4px; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--mint-400);
+  }
+
+  .watch-card {
+    background: var(--amber-bg);
+    border: 1px solid #EFD9B0;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .watch-card h3 { color: var(--amber-strong); font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .watch-card ul li { color: #6E5C29; font-size: 13.5px; }
+  .watch-card ul li::before { background: var(--amber); }
+
+  .disclaimer {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: #FBF5E8;
+    border: 1px solid #EBDDB7;
+    border-radius: 14px;
+    font-size: 12.5px; color: #6E5C29; line-height: 1.6;
+  }
+  .disclaimer strong { color: var(--amber-strong); }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+
+  /* ===== Detail (browse) ===== */
+  .detail { padding: 16px 20px 32px; }
+  .detail-hero {
+    background: linear-gradient(135deg, var(--mint-100), #E9F2EB);
+    border-radius: 24px;
+    padding: 22px 22px 24px;
+    margin-bottom: 18px;
+    position: relative; overflow: hidden;
+  }
+  .detail-emoji { font-size: 38px; line-height: 1; margin-bottom: 8px; }
+  .detail-title { font-size: 24px; font-weight: 700; color: var(--mint-700); }
+  .detail-sub { color: var(--ink-700); font-size: 14px; margin-top: 6px; }
+
+  .lights { display: flex; flex-direction: column; gap: 10px; }
+  .light {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .light .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+    box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 4px var(--line);
+  }
+  .light.green-l { background: var(--green-bg); border-color: #C9E2D5; }
+  .light.green-l .dot { background: var(--green); }
+  .light.amber-l { background: var(--amber-bg); border-color: #EFD9B0; }
+  .light.amber-l .dot { background: var(--amber); }
+  .light.red-l { background: var(--red-bg); border-color: #ECCACA; }
+  .light.red-l .dot { background: var(--red); }
+  .light .lbl { font-weight: 700; font-size: 13.5px; }
+  .light.green-l .lbl { color: var(--green-strong); }
+  .light.amber-l .lbl { color: var(--amber-strong); }
+  .light.red-l .lbl { color: var(--red-strong); }
+  .light .desc { font-size: 13.5px; color: var(--ink-700); margin-top: 2px; }
+
+  /* ===== Bottom nav ===== */
+  .botnav {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px;
+    background: rgba(250,247,240,0.95);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 8px 0 calc(env(safe-area-inset-bottom, 0) + 8px);
+    z-index: 40;
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 6px 6px;
+    color: var(--ink-500); font-size: 11px; font-weight: 600;
+  }
+  .nav-btn.active { color: var(--mint-600); }
+  .nav-btn svg { width: 22px; height: 22px; }
+
+  /* ===== Page transitions ===== */
+  .page { animation: fadeIn .25s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%);
+    background: var(--ink-900); color: #fff;
+    padding: 12px 20px; border-radius: 999px;
+    font-size: 13.5px; z-index: 100;
+    box-shadow: var(--shadow-md);
+    animation: toastIn .25s ease, toastOut .3s ease 1.8s forwards;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translate(-50%, 12px); } }
+
+  /* ===== Empty ===== */
+  .empty { text-align: center; padding: 48px 24px; color: var(--ink-500); }
+  .empty .big { font-size: 40px; margin-bottom: 8px; }
+
+  /* ===== Profile page ===== */
+  .profile-card {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 14px; padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .profile-key { font-size: 13.5px; color: var(--ink-500); }
+  .profile-val { font-size: 15px; font-weight: 600; color: var(--ink-900); }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ====================== ICONS ====================== */
+const ICONS = {
+  back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>',
+  search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  arrow:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5l9-7 9 7"/><path d="M5 9.5V21h14V9.5"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>',
+  history:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/><polyline points="12 7 12 12 15 14"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="12" y1="7" x2="12.01" y2="7"/></svg>',
+  check:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  leaf:'<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-7 5-13 14-13 0 9-6 14-13 14"/><path d="M5 19c2-3 5-6 9-8"/></svg>',
+  /* onboarding icons */
+  onb1:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9h.01M15 9h.01"/><path d="M8 15c1 1 2.5 2 4 2s3-1 4-2"/></svg>',
+  onb2:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>',
+  onb3:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11h6M9 15h4"/><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v3h6V4"/></svg>',
+  cause:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  light:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12c1 1 1 2 1 3h6c0-1 0-2 1-3a7 7 0 0 0-4-12z"/></svg>',
+  dept:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  question:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-2 2-2 3.5"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  watch:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/></svg>',
+  /* category icons */
+  head:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.5 0-8 3-8 7 0 2 .8 3.7 2 5v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3c1.2-1.3 2-3 2-5 0-4-3.5-7-8-7z"/></svg>',
+  lung:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v9"/><path d="M12 13c-1-3-4-5-6-5-1 0-2 .8-2 2v6c0 2.5 2 4 4 4s4-1.5 4-4"/><path d="M12 13c1-3 4-5 6-5 1 0 2 .8 2 2v6c0 2.5-2 4-4 4s-4-1.5-4-4"/></svg>',
+  stomach:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4c0 2 1 3 2 3s2 1 2 3v2c0 4 3 6 5 6 0 3-2 6-6 6s-7-3-7-7c0-3 2-5 2-7s-1-3-1-4 1-2 3-2z"/></svg>',
+  bone:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9a3 3 0 0 1-3-3 3 3 0 0 1 5.5-1.7A3 3 0 0 1 13 4a3 3 0 0 1 1.7 5.5L21 16l-2 2-6.3-6.3A3 3 0 0 1 7 13a3 3 0 0 1-1.7-5.5"/></svg>',
+  skin:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="1"/><circle cx="15" cy="14" r="1"/><circle cx="10" cy="16" r="1"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>',
+  spark:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2 2M16.4 16.4l2 2M5.6 18.4l2-2M16.4 7.6l2-2"/></svg>',
+  mind:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4a4 4 0 0 0-4 4v2a3 3 0 0 0-1 6 3 3 0 0 0 4 3 3 3 0 0 0 5-1V5a3 3 0 0 0-4-1z"/><path d="M15 4a4 4 0 0 1 4 4v2a3 3 0 0 1 1 6 3 3 0 0 1-4 3 3 3 0 0 1-5-1V5a3 3 0 0 1 4-1z"/></svg>',
+  kid:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>',
+  heart:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  tooth:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3c-2 0-4 1.5-4 4 0 1.5.5 3 1 5s1 4 1 6c0 2 1 4 2 4s1.5-2 2-5c.3-2 .5-3 2-3s1.7 1 2 3c.5 3 1 5 2 5s2-2 2-4c0-2 .5-4 1-6s1-3.5 1-5c0-2.5-2-4-4-4-1.5 0-2.5 1-4 1s-2.5-1-4-1z"/></svg>',
+  kidney:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3c3 0 5 3.5 5 8 0 5.5-3 10-7 10-2.5 0-4-1.5-4-4 0-1.5.8-2.5 1.5-3.5.5-.7.5-1.5 0-2.5-.7-1.5-2.5-2-2.5-4 0-2 2-4 4-4h3z"/></svg>',
+  female:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="9" y1="19" x2="15" y2="19"/></svg>',
+  pill:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5a7 7 0 1 1 9.9-9.9l-9.9 9.9z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>',
+  shield:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>',
+};
+
+/* ====================== STORAGE ====================== */
+const STORE = {
+  get(k, dflt) { try { return JSON.parse(localStorage.getItem("vitala." + k)) ?? dflt; } catch { return dflt; } },
+  set(k, v) { try { localStorage.setItem("vitala." + k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem("vitala." + k); } catch {} },
+};
+
+/* ====================== DATA: Categories & Symptoms ====================== */
+const CATEGORIES = [
+  { id: "head",    name: "頭頸部",     icon: "head",     desc: "頭、眼、耳、鼻、喉嚨" },
+  { id: "oral",    name: "口腔牙齒",   icon: "tooth",    desc: "牙齒、牙齦、口腔" },
+  { id: "chest",   name: "胸部與呼吸", icon: "lung",     desc: "胸痛、咳嗽、呼吸" },
+  { id: "abdomen", name: "腹部與消化", icon: "stomach",  desc: "肚子痛、噁心、排便" },
+  { id: "uro",     name: "泌尿生殖",   icon: "kidney",   desc: "尿尿、泌尿不適" },
+  { id: "gyn",     name: "婦科",       icon: "female",   desc: "經期、分泌物、更年期" },
+  { id: "musculo", name: "肌肉骨骼",   icon: "bone",     desc: "關節、背、四肢" },
+  { id: "skin",    name: "皮膚",       icon: "skin",     desc: "起疹、癢、變色" },
+  { id: "general", name: "一般症狀",   icon: "spark",    desc: "發燒、疲倦、體重" },
+  { id: "mind",    name: "心理情緒",   icon: "mind",     desc: "焦慮、失眠、情緒" },
+  { id: "kid",     name: "兒童常見",   icon: "kid",      desc: "孩童專屬症狀" },
+];
+
+/* ===== Custom quizzes (full Q&A) ===== */
+const QUIZZES = {
+  headache: [
+    { q: "你的頭痛是怎麼開始的？", hint: "「突發 + 這輩子最痛」是中風或腦出血的警訊",
+      options: [
+        { label: "突然發作（幾秒到幾分鐘內變成劇痛）", flag: "red" },
+        { label: "逐漸加重（幾小時或幾天內）", flag: "neutral" },
+        { label: "反覆出現過，這次差不多", flag: "neutral" },
+      ]},
+    { q: "頭痛時，有沒有合併以下任一狀況？", multi: true, hint: "勾選任一項即建議立即就醫",
+      options: [
+        { label: "單側肢體無力或麻木", flag: "red" },
+        { label: "口齒不清或意識模糊", flag: "red" },
+        { label: "突發視力模糊、複視", flag: "red" },
+        { label: "發燒合併頸部僵硬", flag: "red" },
+        { label: "頭部受傷後出現的頭痛", flag: "red" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "頭痛持續多久了？",
+      options: [
+        { label: "今天才開始（< 24 小時）", flag: "neutral" },
+        { label: "1–3 天", flag: "neutral" },
+        { label: "超過 3 天還沒好", flag: "amber" },
+        { label: "反覆發作數週以上，越來越頻繁", flag: "amber" },
+      ]},
+    { q: "比較像哪一種痛？",
+      options: [
+        { label: "整顆頭悶悶緊緊（像被勒住）", flag: "neutral" },
+        { label: "單側搏動性，合併噁心或畏光", flag: "neutral" },
+        { label: "前額悶痛＋鼻塞或臉部壓迫感", flag: "neutral" },
+        { label: "說不上來／其他", flag: "neutral" },
+      ]},
+    { q: "對日常生活影響？",
+      options: [
+        { label: "幾乎沒影響", flag: "neutral" },
+        { label: "需要休息一下，但還能做事", flag: "neutral" },
+        { label: "嚴重影響工作或睡眠", flag: "amber" },
+      ]},
+    { q: "休息或吃過普拿疼後改善了嗎？",
+      options: [
+        { label: "明顯改善", flag: "neutral" },
+        { label: "稍微改善但又會痛", flag: "neutral" },
+        { label: "完全沒改善", flag: "amber" },
+      ]},
+  ],
+  fever: [
+    { q: "現在的體溫大約是？",
+      options: [
+        { label: "37.5–38°C（微燒）", flag: "neutral" },
+        { label: "38–39°C", flag: "neutral" },
+        { label: "39°C 以上（高燒）", flag: "amber" },
+      ]},
+    { q: "發燒持續多久了？",
+      options: [
+        { label: "今天剛開始", flag: "neutral" },
+        { label: "1–3 天", flag: "neutral" },
+        { label: "超過 3 天沒退", flag: "amber" },
+        { label: "退退又燒、反覆超過一週", flag: "amber" },
+      ]},
+    { q: "有沒有合併以下任一警訊？", multi: true,
+      options: [
+        { label: "意識改變、嗜睡叫不太醒", flag: "red" },
+        { label: "頸部僵硬、抬頭有阻力", flag: "red" },
+        { label: "皮膚出現紫紅色斑點不褪色", flag: "red" },
+        { label: "嚴重呼吸困難、嘴唇發紫", flag: "red" },
+        { label: "嚴重脫水（很少尿、嘴乾、頭暈）", flag: "amber" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "有沒有局部症狀可以指向感染源？", multi: true, hint: "勾你有的，可以幫醫生快速定位",
+      options: [
+        { label: "喉嚨痛、咳嗽、流鼻水", flag: "neutral" },
+        { label: "腰側痛或解尿不適", flag: "amber" },
+        { label: "腹瀉、嘔吐、腹痛", flag: "neutral" },
+        { label: "皮膚紅腫熱痛", flag: "amber" },
+        { label: "都沒有特別感覺", flag: "neutral" },
+      ]},
+    { q: "近期有沒有以下狀況？", multi: true,
+      options: [
+        { label: "近 1 個月內出國旅遊", flag: "amber" },
+        { label: "近期手術或侵入性處置", flag: "amber" },
+        { label: "正在服用免疫抑制劑或化療中", flag: "red" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+  ],
+  chestpain: [
+    { q: "胸痛是怎麼開始的？",
+      options: [
+        { label: "突然發作的壓迫性胸痛", flag: "red" },
+        { label: "活動時或情緒激動時出現", flag: "amber" },
+        { label: "和呼吸或按壓有關", flag: "neutral" },
+        { label: "反覆出現一段時間了", flag: "amber" },
+      ]},
+    { q: "有沒有合併以下任一狀況？", multi: true, hint: "任一項都應立即急診",
+      options: [
+        { label: "胸痛持續超過 15 分鐘沒緩解", flag: "red" },
+        { label: "輻射至左肩、下巴或背部", flag: "red" },
+        { label: "合併冒冷汗、噁心、頭暈", flag: "red" },
+        { label: "嚴重呼吸困難或嘴唇發紫", flag: "red" },
+        { label: "突發劇烈撕裂痛感", flag: "red" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "胸痛的性質比較像？",
+      options: [
+        { label: "壓迫感、像有重物壓著", flag: "amber" },
+        { label: "燒灼感（特別是飯後或躺平更明顯）", flag: "neutral" },
+        { label: "按壓或特定姿勢會痛", flag: "neutral" },
+        { label: "尖銳針刺感", flag: "neutral" },
+      ]},
+    { q: "你有沒有以下心血管危險因子？", multi: true,
+      options: [
+        { label: "高血壓、糖尿病、高血脂", flag: "amber" },
+        { label: "目前抽菸或長期抽菸", flag: "amber" },
+        { label: "家族有早發心臟病史", flag: "amber" },
+        { label: "年齡 ≥ 55 歲", flag: "amber" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "胸痛持續多久了？",
+      options: [
+        { label: "現在還在痛", flag: "amber" },
+        { label: "幾分鐘到一小時前緩解", flag: "amber" },
+        { label: "已經好幾天反覆出現", flag: "amber" },
+      ]},
+  ],
+  abdominal: [
+    { q: "肚子痛主要在哪個位置？",
+      options: [
+        { label: "上腹（胃的位置）", flag: "neutral" },
+        { label: "右上腹（肋骨下方）", flag: "neutral" },
+        { label: "右下腹", flag: "amber" },
+        { label: "下腹或全腹", flag: "neutral" },
+        { label: "腰部兩側", flag: "amber" },
+      ]},
+    { q: "有沒有以下警訊？", multi: true, hint: "任一項建議立即就醫",
+      options: [
+        { label: "腹部硬如板、按壓會反彈痛", flag: "red" },
+        { label: "嘔血或解黑色／血便", flag: "red" },
+        { label: "高燒合併劇烈腹痛", flag: "red" },
+        { label: "孕婦下腹劇痛或陰道出血", flag: "red" },
+        { label: "突然發作右下腹劇痛", flag: "red" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "腹痛持續多久？",
+      options: [
+        { label: "幾小時內", flag: "neutral" },
+        { label: "1 天左右", flag: "neutral" },
+        { label: "超過 1 天還沒緩解", flag: "amber" },
+        { label: "反覆發作好幾週", flag: "amber" },
+      ]},
+    { q: "有沒有合併以下症狀？", multi: true,
+      options: [
+        { label: "噁心或嘔吐", flag: "neutral" },
+        { label: "腹瀉", flag: "neutral" },
+        { label: "便秘 / 排不出氣", flag: "amber" },
+        { label: "解尿疼痛或頻尿", flag: "amber" },
+        { label: "食慾明顯下降或體重減輕", flag: "amber" },
+        { label: "都沒有", flag: "neutral" },
+      ]},
+    { q: "什麼情況會讓痛加劇？",
+      options: [
+        { label: "空腹或進食後", flag: "neutral" },
+        { label: "脂肪餐之後", flag: "neutral" },
+        { label: "走路、震動", flag: "amber" },
+        { label: "沒有規律", flag: "neutral" },
+      ]},
+  ],
+  cough: [
+    { q: "咳嗽多久了？",
+      options: [
+        { label: "1 週以內", flag: "neutral" },
+        { label: "1–3 週", flag: "neutral" },
+        { label: "3–8 週", flag: "amber" },
+        { label: "超過 8 週", flag: "amber" },
+      ]},
+    { q: "有沒有以下警訊？", multi: true,
+      options: [
+        { label: "咳血或痰中帶血", flag: "red" },
+        { label: "嚴重呼吸困難或嘴唇發紫", flag: "red" },
+        { label: "胸痛合併喘", flag: "red" },
+        { label: "夜間盜汗合併體重減輕", flag: "amber" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "痰的狀況？",
+      options: [
+        { label: "乾咳沒痰", flag: "neutral" },
+        { label: "白色或透明痰", flag: "neutral" },
+        { label: "黃綠色濃痰", flag: "amber" },
+      ]},
+    { q: "有沒有合併感冒症狀？",
+      options: [
+        { label: "有，最近感冒中", flag: "neutral" },
+        { label: "沒有，單純咳嗽", flag: "amber" },
+      ]},
+    { q: "什麼時候比較容易咳？", multi: true,
+      options: [
+        { label: "晚上躺下時加劇", flag: "neutral" },
+        { label: "活動或運動時喘咳", flag: "amber" },
+        { label: "吃東西嗆到", flag: "amber" },
+        { label: "沒有特定情況", flag: "neutral" },
+      ]},
+  ],
+  backpain: [
+    { q: "背痛是怎麼來的？",
+      options: [
+        { label: "搬重物或運動後", flag: "neutral" },
+        { label: "姿勢不良慢慢累積", flag: "neutral" },
+        { label: "近期跌倒或外傷後", flag: "amber" },
+        { label: "找不到明顯原因", flag: "amber" },
+      ]},
+    { q: "有沒有以下警訊？", multi: true, hint: "任一項都建議立即評估",
+      options: [
+        { label: "下肢無力、走路不穩", flag: "red" },
+        { label: "大小便失禁或解尿困難", flag: "red" },
+        { label: "會陰部、肛門周圍麻木", flag: "red" },
+        { label: "不明原因發燒合併背痛", flag: "red" },
+        { label: "近期不明體重減輕", flag: "amber" },
+        { label: "以上都沒有", flag: "neutral" },
+      ]},
+    { q: "痛多久了？",
+      options: [
+        { label: "1 週內", flag: "neutral" },
+        { label: "2–4 週", flag: "neutral" },
+        { label: "超過 6 週還沒好", flag: "amber" },
+        { label: "夜裡會痛醒", flag: "amber" },
+      ]},
+    { q: "有沒有放射到下肢？",
+      options: [
+        { label: "只有背痛，沒延伸", flag: "neutral" },
+        { label: "麻或痛從屁股到大腿後側／小腿", flag: "amber" },
+        { label: "雙側下肢都有麻或無力", flag: "red" },
+      ]},
+    { q: "什麼姿勢會加重？",
+      options: [
+        { label: "彎腰或久坐", flag: "neutral" },
+        { label: "後仰或站久", flag: "neutral" },
+        { label: "任何動作都痛", flag: "amber" },
+      ]},
+  ],
+};
+
+/* ===== Symptoms (full data) ===== */
+const SYMPTOMS = [
+  { id:"headache", cat:"head", emoji:"🤕", name:"頭痛", short:"從緊縮型到偏頭痛皆可能",
+    summary:"頭痛是最常見的症狀之一，多數屬於良性，但少數情況可能是中風、腦出血或腦膜炎等急症的警訊。",
+    causes:["緊縮型頭痛（壓力、肩頸僵硬、睡眠不足）","偏頭痛（單側搏動性、合併噁心或畏光）","鼻竇炎（鼻塞合併前額悶痛）","眼睛疲勞、姿勢不良","高血壓、藥物因素","少見但嚴重：腦出血、腦膜炎、暫時性腦缺血"],
+    green:"輕微悶痛、休息後緩解、無其他症狀",
+    amber:"頭痛持續超過 3 天、頻率愈來愈高、合併噁心或視力模糊，或影響日常生活",
+    red:"突發「這輩子最痛」、合併單側無力／口齒不清／意識模糊、發燒合併頸部僵硬、頭部受傷後頭痛",
+    treatment:["急性發作可使用普拿疼或非類固醇消炎止痛藥（如 ibuprofen）","偏頭痛急性期應在安靜、昏暗環境休息，避免聲光刺激","熱敷或按摩肩頸可緩解緊縮型頭痛","頻繁發作（每月 4 次以上）可請醫師評估預防性用藥","物理治療、針灸、生理回饋對部分患者有幫助"],
+    prevention:["維持規律睡眠（每天 7–8 小時、固定就寢時間）","減少咖啡因、酒精及加工食品","避免長時間低頭滑手機，每 30 分鐘起身伸展","記錄頭痛日記找出誘發因素（壓力、特定食物、月經、天氣）","規律有氧運動（每週 150 分鐘）"],
+    depts:["家醫科","神經內科"],
+    deptsAlt:["神經外科（外傷後）","耳鼻喉科（鼻竇炎）"],
+    questions:["我的頭痛屬於哪一型？需要做影像檢查嗎？","哪些症狀出現時應該立即回診或掛急診？","有沒有可以記錄的方式幫助找出誘發因素？"],
+    watchOuts:["突發劇烈頭痛","單側無力或口齒不清","視力突然改變","發燒合併頸部僵硬","頭痛伴隨意識變化"]
+  },
+  { id:"dizzy", cat:"head", emoji:"💫", name:"頭暈／眩暈", short:"天旋地轉或頭重腳輕",
+    summary:"頭暈分為「眩暈（覺得周圍在轉）」與「頭昏（要昏倒的感覺）」，原因不同。",
+    causes:["內耳問題（良性陣發性姿勢性眩暈、梅尼爾氏症）","姿勢性低血壓","貧血、脫水、低血糖","藥物副作用","焦慮、過度換氣","少見：後循環中風"],
+    green:"短暫頭暈、改變姿勢後出現、休息後緩解",
+    amber:"反覆發作、合併耳鳴或聽力改變、影響日常活動",
+    red:"突發嚴重眩暈合併單側無力、口齒不清、複視、走路不穩、劇烈頭痛或胸痛",
+    depts:["家醫科","耳鼻喉科","神經內科"],
+    treatment:["良性陣發性姿勢性眩暈可由耳鼻喉科做耳石復位術，多數能立即改善","梅尼爾氏症需限鈉飲食並使用利尿劑、止暈藥","姿勢性低血壓者起身應分段：先坐起、再站立","急性眩暈可短期使用止暈藥（如 betahistine、meclizine）","暈眩期間避免開車、操作機械、高處活動"],
+    prevention:["充足水分與規律飲食，避免低血糖","控制血壓、避免高鹽飲食","減少咖啡因、酒精和尼古丁","起床或久坐起身時放慢動作","規律運動以改善平衡與循環"],
+    questions:["我的暈是哪一型？是內耳還是腦部來源？","需要做哪些檢查（聽力、平衡、影像）？","有什麼動作或姿勢應該避免？"],
+    watchOuts:["突發單側無力","口齒不清或複視","劇烈頭痛","胸痛合併喘","昏厥"]
+  },
+  { id:"sorethroat", cat:"head", emoji:"😖", name:"喉嚨痛", short:"吞嚥疼痛、聲音沙啞",
+    summary:"多由病毒感染引起，會自行痊癒；少數細菌（如鏈球菌）需要抗生素治療。",
+    causes:["病毒性咽喉炎","鏈球菌咽喉炎","流感、新冠","胃食道逆流","過敏、空氣乾燥"],
+    green:"輕微疼痛、能正常吞嚥、無高燒",
+    amber:"持續超過一週、合併高燒、扁桃腺有白色膿點、頸部淋巴結腫大",
+    red:"無法吞嚥口水、流口水、呼吸困難、聲音「悶悶的」（疑似會厭炎）",
+    depts:["家醫科","耳鼻喉科"],
+    treatment:["多喝溫水、含潤喉糖、避免大聲說話讓嗓子休息","可使用普拿疼或 NSAIDs 緩解疼痛與發燒","鏈球菌感染需完整服完醫師開立的抗生素療程（通常 10 天）","鹽水漱口或喉嚨噴劑可緩解局部不適","勿擅自要求抗生素——病毒感染用抗生素無效"],
+    prevention:["勤洗手、流感與新冠疫苗接種","避免與感冒患者共用餐具或杯子","保持空氣濕度、戒菸、避免二手菸","秋冬注意保暖、減少冷空氣直接刺激喉嚨","胃食道逆流者需配合飲食控制"],
+    questions:["這是病毒還是細菌引起？需要做快篩嗎？","什麼情況下需要抗生素？","多久不好需要回診？"],
+    watchOuts:["無法吞嚥口水","呼吸困難","高燒不退","頸部腫脹"]
+  },
+  { id:"earache", cat:"head", emoji:"👂", name:"耳朵痛", short:"中耳炎、外耳炎或牙齒轉移痛",
+    summary:"多為中耳或外耳發炎，但也可能是顳顎關節、咽喉或牙齒問題的轉移痛。",
+    causes:["中耳炎","外耳道炎","耳垢栓塞","顳顎關節疼痛","牙齒問題轉移痛"],
+    green:"輕微悶痛、與感冒相關、無聽力改變",
+    amber:"持續超過 3 天、明顯聽力下降、耳朵流出分泌物",
+    red:"高燒合併耳後紅腫熱痛、突發性聽力喪失、嚴重眩暈合併耳痛",
+    depts:["耳鼻喉科"],
+    treatment:["中耳炎可使用止痛藥緩解，多數病毒性會自行痊癒","細菌性中耳炎需口服抗生素","外耳道炎可使用抗生素耳滴劑、保持耳道乾燥","耳垢堵塞請耳鼻喉科處理，勿自行用棉花棒挖耳","顳顎關節痛可熱敷、避免咬硬物"],
+    prevention:["游泳後將耳朵側傾倒水、輕拍擦乾","避免用棉花棒、髮夾掏耳朵","感冒時擤鼻涕應一邊一邊輕擤，避免細菌灌入中耳","控制過敏與鼻竇問題","定期牙科檢查避免顳顎關節失調"],
+    questions:["這是中耳還是外耳的問題？","什麼情況下需要抗生素？","聽力會不會受影響？"],
+    watchOuts:["耳後紅腫熱痛","突發聽力喪失","嚴重眩暈"]
+  },
+  { id:"runnynose", cat:"head", emoji:"🤧", name:"流鼻水／鼻塞", short:"感冒、過敏或鼻竇炎",
+    summary:"短期多為感冒或過敏性鼻炎；長期或單側鼻塞需排除其他原因。",
+    causes:["上呼吸道感染","過敏性鼻炎","鼻竇炎","鼻中膈彎曲","鼻瘜肉"],
+    green:"短期、合併感冒症狀、清水樣鼻涕",
+    amber:"持續超過 2 週、濃稠黃綠鼻涕合併臉部疼痛、單側鼻塞",
+    red:"反覆鼻血、單側鼻塞合併臉部麻木或視力改變",
+    depts:["耳鼻喉科","家醫科"],
+    treatment:["過敏性鼻炎可使用抗組織胺、類固醇鼻噴劑","急性鼻竇炎多由病毒引起會自行好轉，細菌性才需抗生素","蒸氣吸入或溫熱毛巾敷鼻可緩解充血","生理食鹽水洗鼻有助清除分泌物","避免長期使用減充血鼻噴劑（>5 天會反彈性鼻塞）"],
+    prevention:["避開已知過敏原（塵蟎、花粉、寵物毛屑）","定期清洗床單、使用防蟎寢具","空氣乾燥時使用加濕器、避免突然進出冷氣房","季節交替時提前準備過敏藥","戒菸並避免二手菸"],
+    questions:["這是過敏還是感染？要做過敏原檢測嗎？","有哪些藥物可以使用？","環境調整可以怎麼做？"],
+    watchOuts:["反覆鼻血","臉部麻木","視力改變"]
+  },
+  { id:"redeye", cat:"head", emoji:"👁️", name:"眼睛紅／眼睛痛", short:"結膜炎或更嚴重眼病",
+    summary:"最常見是結膜炎，但需排除青光眼、虹彩炎等視力威脅疾病。",
+    causes:["結膜炎（病毒、細菌、過敏）","乾眼症","隱形眼鏡相關","角膜炎、角膜潰瘍","急性青光眼"],
+    green:"輕微紅眼、無視力改變、無明顯疼痛",
+    amber:"分泌物多、持續超過 3 天、合併刺痛",
+    red:"視力突然模糊或減退、嚴重眼痛合併眼壓高、畏光、頭痛合併噁心",
+    depts:["眼科"],
+    treatment:["細菌性結膜炎使用抗生素眼藥水","病毒性結膜炎多會自行痊癒，重點在隔離與冰敷舒緩","過敏性結膜炎使用抗組織胺眼藥水","乾眼症長期使用人工淚液、避免長時間用眼","急性青光眼需立即眼科處置降眼壓——延誤可能失明"],
+    prevention:["勤洗手、不用手揉眼睛","隱形眼鏡正確清潔、不超時佩戴","電腦使用 20-20-20（每 20 分鐘看 6 公尺外 20 秒）","戶外戴太陽眼鏡防紫外線","40 歲後定期眼科檢查（特別是青光眼家族史）"],
+    questions:["這是哪一型結膜炎？會不會傳染？","隱形眼鏡可以繼續戴嗎？","什麼情況下視力會受影響？"],
+    watchOuts:["視力突然模糊","嚴重眼痛","畏光","頭痛合併噁心"]
+  },
+  { id:"cough", cat:"chest", emoji:"😷", name:"咳嗽", short:"急性、慢性、有痰或無痰",
+    summary:"以時間長短分類：急性（<3 週）、亞急性（3–8 週）、慢性（>8 週），原因差異很大。",
+    causes:["上呼吸道感染","支氣管炎、肺炎","氣喘、慢性阻塞性肺病","胃食道逆流","鼻涕倒流","少見：肺結核、肺癌、肺栓塞"],
+    green:"輕微乾咳、感冒合併、自行緩解中",
+    amber:"咳嗽超過 3 週、有痰且濃稠變色、夜咳影響睡眠、合併喘鳴",
+    red:"咳血、明顯呼吸困難、胸痛、嘴唇發紫、高燒合併呼吸喘",
+    depts:["家醫科","胸腔內科"],
+    deptsAlt:["耳鼻喉科","過敏免疫風濕科"],
+    treatment:["急性咳嗽多為病毒，多休息、補水即可","氣喘需使用支氣管擴張劑與類固醇吸入劑","細菌性肺炎、支氣管炎需抗生素","胃食道逆流引起的咳嗽要從飲食和制酸劑著手","止咳藥需依乾咳或有痰選擇，痰多者不宜強力止咳"],
+    prevention:["接種流感、新冠、肺炎鏈球菌疫苗","戒菸並避開二手菸與空氣污染","氣喘患者按時使用控制藥物、避開誘發因子","胃食道逆流者飯後 2 小時內勿躺、減少咖啡與宵夜","出入醫院或人多場所戴口罩"],
+    questions:["咳嗽多久了？需要照胸部 X 光嗎？","有沒有可能是氣喘或胃食道逆流？","哪些情況需要立刻回診？"],
+    watchOuts:["咳血","呼吸困難","胸痛","高燒合併喘","體重減輕"]
+  },
+  { id:"chestpain", cat:"chest", emoji:"💔", name:"胸痛", short:"心、肺、肌肉骨骼或胃食道",
+    summary:"胸痛是急診室最常評估的症狀之一。雖然多數是肌肉骨骼或胃食道引起，但心臟病、肺栓塞等致命原因必須優先排除。",
+    causes:["肌肉骨骼疼痛","胃食道逆流","焦慮、過度換氣","氣喘、肺炎、肋膜炎","心絞痛、心肌梗塞","主動脈剝離、肺栓塞、氣胸"],
+    green:"按壓會痛、隨姿勢變化、淺表針刺感，年輕健康者無危險因子",
+    amber:"反覆發作、運動或情緒激動時出現、合併胃部不適",
+    red:"突發性壓迫性胸痛持續超過 15 分鐘、輻射至左肩或背部、冒冷汗、呼吸困難",
+    depts:["家醫科","心臟內科","胸腔內科"],
+    deptsAlt:["腸胃內科","急診"],
+    treatment:["心肌梗塞需立即送急診做冠狀動脈處置（黃金 90 分鐘）","胃食道逆流可使用制酸劑、PPI 並調整飲食習慣","肌肉骨骼性胸痛使用 NSAIDs 與熱敷，多休息","焦慮性胸痛可從心理治療與呼吸訓練著手","心絞痛患者隨身攜帶硝化甘油舌下錠"],
+    prevention:["控制三高（血壓、血糖、血脂）","戒菸——抽菸是心血管病的最大可控風險因子","規律運動：每週 150 分鐘中等強度有氧","維持理想體重、地中海飲食","定期健康檢查（40 歲以上每年一次）"],
+    questions:["哪些檢查可以排除心臟和肺的問題？","我的危險因子需要進一步評估嗎？","什麼情況下我應該直接掛急診？"],
+    watchOuts:["持續壓迫性胸痛","冒冷汗","呼吸困難","左肩或下巴疼痛","昏厥"]
+  },
+  { id:"sob", cat:"chest", emoji:"🫁", name:"呼吸困難", short:"喘不過氣、胸悶",
+    summary:"可能來自肺、心臟、血液或代謝問題，急性發作時需立即評估。",
+    causes:["氣喘急性發作","肺炎、支氣管炎","慢性阻塞性肺病","心衰竭、心律不整","貧血","少見：肺栓塞、氣胸"],
+    green:"輕微運動後喘、休息後緩解、沒有其他症狀",
+    amber:"近期喘的程度比平常嚴重、夜裡因喘醒、合併下肢水腫",
+    red:"突發嚴重喘不過氣、嘴唇發紫、無法說完一句話、合併胸痛或咳血",
+    depts:["家醫科","胸腔內科","心臟內科"],
+    treatment:["氣喘急性發作使用短效支氣管擴張劑，重症需就醫使用類固醇","心衰竭需使用利尿劑、降低心臟負擔的藥物","貧血依原因補充鐵劑、葉酸、B12 或治療慢性病","慢性阻塞性肺病需長效吸入劑、氧氣治療","急性肺栓塞、氣胸是急症，需立即送急診"],
+    prevention:["戒菸與避開空氣污染、二手菸","規律運動增加心肺功能、控制體重","氣喘與 COPD 患者需按時使用控制藥物","接種流感與肺炎疫苗","睡眠呼吸中止症患者使用陽壓呼吸器"],
+    questions:["我的喘比較像來自肺還是心臟？需要做哪些檢查？","在什麼情況下我應該叫救護車？","可以記錄哪些指標追蹤？"],
+    watchOuts:["突發喘不過氣","嘴唇發紫","胸痛","咳血","意識改變"]
+  },
+  { id:"palpitation", cat:"chest", emoji:"💓", name:"心悸", short:"心跳變快或不規則",
+    summary:"多數是良性，但反覆發作或合併不適時需要評估是否為心律不整。",
+    causes:["焦慮、咖啡因、酒精","發燒、脫水、貧血","甲狀腺機能亢進","心律不整","心臟結構性問題"],
+    green:"偶發、與情緒或咖啡因相關、能自行緩解",
+    amber:"頻繁發作、持續數分鐘以上、合併頭暈或胸悶",
+    red:"心悸合併昏厥、胸痛、嚴重呼吸困難、心跳極快或極慢無法緩解",
+    depts:["家醫科","心臟內科"],
+    treatment:["先排除可逆因素：發燒、脫水、貧血、甲狀腺問題","心律不整依類型不同：心房顫動需抗凝血治療預防中風","頻繁室上性心搏過速可考慮電燒治療","急性發作時可嘗試 Valsalva 動作（憋氣用力）","焦慮引起者可從心理治療與放鬆訓練著手"],
+    prevention:["減少咖啡因、能量飲料、酒精攝取","規律睡眠、避免過度勞累","壓力管理、學習放鬆技巧","控制血壓、血脂、血糖","戒菸"],
+    questions:["需要做心電圖或 24 小時心電圖嗎？","哪些情況下我應該立即就醫？","哪些飲食或習慣應該避免？"],
+    watchOuts:["昏厥","胸痛","嚴重呼吸困難","心跳異常無法緩解"]
+  },
+  { id:"abdominal", cat:"abdomen", emoji:"🤢", name:"腹痛", short:"位置與性質決定可能病因",
+    summary:"腹痛的「位置」很關鍵——上腹、下腹、左、右、絞痛或悶痛，每種模式對應不同器官。",
+    causes:["胃炎、胃潰瘍（上腹）","膽結石、膽囊炎（右上腹）","闌尾炎（右下腹）","腸胃炎","腎結石","婦科問題","便秘、腸躁症"],
+    green:"輕微悶痛、與飲食相關、能自行緩解、無發燒",
+    amber:"持續超過 24 小時、反覆發作、合併食慾不振或體重減輕",
+    red:"劇烈腹痛無法緩解、按壓反彈痛、腹部硬如板、嘔血或解黑便、孕婦下腹劇痛",
+    depts:["家醫科","腸胃內科"],
+    deptsAlt:["一般外科","婦產科","泌尿科"],
+    treatment:["胃炎、胃潰瘍可使用制酸劑、PPI 並避免刺激性食物","闌尾炎、膽囊炎、腸阻塞通常需要手術","腎結石小於 5mm 多會自行排出，配合止痛、多喝水","腸躁症需配合飲食調整與壓力管理","劇烈或持續腹痛勿自行服止痛藥（可能掩蓋病情）"],
+    prevention:["規律飲食、避免暴飲暴食","減少辛辣、油炸、咖啡、酒精","充足水分、足量纖維預防膽結石與便秘","幽門桿菌篩檢與根除（曾有胃潰瘍者）","定期健檢、必要時做大腸鏡篩檢"],
+    questions:["我的腹痛位置和性質指向哪些可能？","需要做超音波、抽血或內視鏡嗎？","哪些紅旗症狀我應該特別注意？"],
+    watchOuts:["劇烈腹痛無法緩解","腹部硬如板","嘔血或解黑便","高燒合併腹痛","孕婦下腹劇痛"]
+  },
+  { id:"diarrhea", cat:"abdomen", emoji:"🚽", name:"腹瀉", short:"急性多為感染，慢性需查清原因",
+    summary:"急性腹瀉多為感染，重點在補水；慢性腹瀉需要進一步檢查。",
+    causes:["病毒性腸胃炎","細菌性腸胃炎","食物中毒","抗生素相關","乳糖不耐","腸躁症","發炎性腸道疾病"],
+    green:"水瀉幾次、能正常進食、無高燒",
+    amber:"持續超過 3 天、明顯脫水、合併發燒、嬰幼兒或老人腹瀉",
+    red:"血便、解黑便、嚴重腹痛、高燒不退、嚴重脫水、意識改變",
+    depts:["家醫科","腸胃內科"],
+    treatment:["最重要的是補水：口服電解質補充液（不是運動飲料）","清淡飲食：白吐司、白粥、香蕉、蘋果","止瀉藥（如 loperamide）僅適合無感染徵兆者，發燒或血便時不可使用","益生菌可縮短病程","嚴重脫水需就醫點滴補充"],
+    prevention:["勤洗手——尤其飯前、如廁後、處理食物前","食物徹底煮熟、避免生食生水","旅遊時注意飲食衛生","抗生素相關腹瀉者下次可預防性補充益生菌","乳糖不耐者避免相關食物"],
+    questions:["需要驗大便檢查感染源嗎？","什麼飲食可以加速恢復？","什麼時候需要止瀉藥？"],
+    watchOuts:["血便或解黑便","嚴重脫水","高燒不退","意識改變"]
+  },
+  { id:"vomit", cat:"abdomen", emoji:"🤮", name:"噁心嘔吐", short:"從腸胃炎到偏頭痛皆可能",
+    summary:"原因可能在腸胃也可能來自腦部、內耳或代謝。",
+    causes:["腸胃炎、食物中毒","懷孕","偏頭痛","內耳問題","藥物副作用","胃出口阻塞、腸阻塞","腦壓上升"],
+    green:"短暫嘔吐後緩解、能補水",
+    amber:"反覆嘔吐超過 24 小時、無法進食、合併腹痛或發燒",
+    red:"嘔血或咖啡渣樣物、嚴重脫水、合併劇烈頭痛或意識改變、噴射性嘔吐",
+    depts:["家醫科","腸胃內科"],
+    treatment:["少量多次補充水分（每次 50–100ml，每 10–15 分鐘）","可使用止吐藥（如 metoclopramide、ondansetron）","懷孕嘔吐可從維生素 B6 開始嘗試","緩解後從清淡食物（吐司、米飯）逐步恢復","避免油膩、刺激性食物與咖啡"],
+    prevention:["規律進食、避免過飽或空腹太久","暈車者上車前服用止暈藥、選擇前座","懷孕初期少量多餐、避開強烈氣味","偏頭痛者管控誘發因素","胃食道逆流者調整飲食與睡姿"],
+    questions:["如何避免脫水？什麼時候需要點滴？","哪些止吐藥比較安全？","有沒有可能是其他系統的問題？"],
+    watchOuts:["嘔血","嚴重脫水","劇烈頭痛","意識改變","噴射性嘔吐"]
+  },
+  { id:"constipation", cat:"abdomen", emoji:"🪨", name:"便秘", short:"頻率減少、排便困難",
+    summary:"多數可透過生活調整改善。",
+    causes:["纖維與水分不足","運動量少","藥物","甲狀腺機能低下","腸躁症","少見：大腸阻塞、腫瘤"],
+    green:"短期便秘、與飲食習慣有關、調整後改善",
+    amber:"持續超過 2 週、便秘與腹瀉交替、糞便變細、合併體重減輕",
+    red:"便血、嚴重腹痛無法排氣排便、嘔吐合併腹脹",
+    depts:["家醫科","腸胃內科"],
+    treatment:["增加水分攝取（每天 1500–2000ml）","纖維類食物（蔬菜、水果、全穀）","規律運動可促進腸蠕動","短期可使用緩瀉劑（如氧化鎂、聚乙二醇），長期請醫師評估","避免長期使用刺激性瀉藥（番瀉葉、bisacodyl 等）"],
+    prevention:["每天定時嘗試排便（特別是早餐後 15–30 分鐘）","不要忽視便意","規律運動：散步、瑜珈、核心訓練","調整可能引起便秘的藥物（與醫師討論）","50 歲後依指引做大腸癌篩檢"],
+    questions:["需要做大腸鏡嗎？","哪些飲食和習慣調整最有效？","軟便劑可以長期使用嗎？"],
+    watchOuts:["便血","嚴重腹痛","腹脹合併嘔吐","體重減輕"]
+  },
+  { id:"backpain", cat:"musculo", emoji:"🪑", name:"背痛／下背痛", short:"多為肌肉拉傷",
+    summary:"9 成為非特異性、會在數週內改善；少數情況需排除嚴重病因。",
+    causes:["肌肉拉傷、姿勢不良","椎間盤突出、坐骨神經痛","骨刺、退化性脊椎炎","腎結石（腰側痛）","少見：壓迫性骨折、感染、腫瘤、馬尾症候群"],
+    green:"輕度痠痛、與活動相關、休息後改善",
+    amber:"持續超過 4–6 週、夜間痛醒、影響日常工作",
+    red:"下肢無力或麻痺、大小便失禁、會陰部麻木、外傷後背痛、不明原因發燒或體重減輕",
+    depts:["家醫科","復健科","骨科"],
+    deptsAlt:["神經外科","泌尿科"],
+    treatment:["急性期可冰敷、輕度活動（不建議長時間臥床）","NSAIDs 或肌肉鬆弛劑短期使用","物理治療、徒手治療對多數慢性下背痛有效","椎間盤突出嚴重者可考慮神經阻斷或手術","核心肌群訓練（如皮拉提斯、麥肯基運動）有預防復發效果"],
+    prevention:["維持理想體重、避免肥胖","正確姿勢：螢幕平視、椅子有支撐、抬重物用蹲姿","規律核心與背部肌群訓練","避免久坐——每 30–60 分鐘起身","睡硬度適中的床墊"],
+    questions:["這是肌肉問題還是神經壓迫？需要做影像檢查嗎？","可以做哪些運動和伸展？","什麼情況下需要轉診手術評估？"],
+    watchOuts:["下肢無力","大小便失禁","會陰部麻木","外傷後背痛","發燒合併背痛"]
+  },
+  { id:"jointpain", cat:"musculo", emoji:"🦴", name:"關節痛", short:"急性外傷或慢性發炎",
+    summary:"分為急性（外傷、痛風、感染）與慢性（退化性、類風濕性），治療策略差很多。",
+    causes:["外傷","退化性關節炎","痛風","類風濕性關節炎","感染性關節炎"],
+    green:"輕度痠痛、活動後出現、休息冰敷後改善",
+    amber:"關節持續腫脹超過 2 週、晨間僵硬超過 30 分鐘",
+    red:"關節劇烈紅腫熱痛合併發燒、外傷後無法承重、關節變形",
+    depts:["家醫科","骨科","復健科"],
+    deptsAlt:["過敏免疫風濕科"],
+    treatment:["急性外傷使用 PRICE 原則：保護、休息、冰敷、加壓、抬高","退化性關節炎使用 NSAIDs、玻尿酸注射、嚴重者人工關節","痛風急性期使用秋水仙素、NSAIDs、類固醇","類風濕性關節炎需早期使用免疫調節藥物","感染性關節炎是急症，需立即抗生素+引流"],
+    prevention:["維持理想體重，減少關節負擔","規律低衝擊運動（游泳、騎車、瑜珈）","痛風者：低普林飲食、多喝水、限制酒精（特別是啤酒）","補充足夠鈣質與維生素 D","運動前充分熱身、運動中量力而為"],
+    questions:["這是退化還是發炎？需要驗血或抽關節液嗎？","哪些運動可以做？","急性疼痛可以怎麼處理？"],
+    watchOuts:["關節劇烈紅腫熱痛","發燒合併關節痛","無法承重","關節變形"]
+  },
+  { id:"rash", cat:"skin", emoji:"🔴", name:"皮疹", short:"從蕁麻疹到藥物疹皆可能",
+    summary:"皮疹的型態、分布、是否癢、有無發燒，是判斷的關鍵。",
+    causes:["接觸性皮膚炎","蕁麻疹","異位性皮膚炎、濕疹","病毒疹","藥物疹","昆蟲叮咬","帶狀皰疹","少見但嚴重：史蒂芬強生症候群"],
+    green:"局部、不癢或輕癢、無其他症狀",
+    amber:"全身性、持續搔癢、反覆發作、近期有新藥使用",
+    red:"全身性皮疹合併發燒、口腔黏膜潰瘍、嘴唇眼皮腫脹、呼吸困難、皮膚大片脫落、瘀斑",
+    depts:["皮膚科"],
+    deptsAlt:["過敏免疫風濕科","急診"],
+    treatment:["接觸性皮膚炎避開過敏原、可使用外用類固醇","蕁麻疹使用抗組織胺，反覆發作可長期使用","異位性皮膚炎重在保濕，急性期外用類固醇或 tacrolimus","帶狀皰疹 72 小時內使用抗病毒藥效果最好","嚴重藥物疹（如史蒂芬強生症候群）需立即停藥並住院"],
+    prevention:["異位性皮膚炎重視日常保濕（每天 2 次以上）","避開已知過敏原與刺激物（香精、染料、特定食材）","過敏體質者可考慮過敏原檢測","皮膚清潔避免過度搓洗、使用溫和清潔劑","使用新藥物時注意是否出現皮疹，必要時就醫"],
+    questions:["這是過敏還是感染？需要做切片或抽血嗎？","有沒有需要避免的食物、藥物？","保養和清潔上要注意什麼？"],
+    watchOuts:["合併發燒","口腔潰瘍","眼皮嘴唇腫脹","呼吸困難","皮膚大片脫落"]
+  },
+  { id:"itch", cat:"skin", emoji:"🫧", name:"皮膚癢", short:"乾燥、過敏或內科疾病",
+    summary:"全身癢但沒有明顯疹子，可能是內科疾病（肝、腎、甲狀腺）的表現。",
+    causes:["皮膚乾燥","老人乾燥性皮膚炎","肝膽疾病","腎臟疾病","甲狀腺問題","糖尿病","懷孕","少見：淋巴瘤"],
+    green:"局部、與乾燥相關、保濕後改善",
+    amber:"持續全身癢超過 2 週、夜癢影響睡眠、合併體重減輕",
+    red:"合併黃疸、解尿減少或暗茶色尿、淋巴結腫大、不明原因發燒或盜汗",
+    depts:["皮膚科","家醫科"],
+    treatment:["保濕乳液每天至少 2 次（特別是洗澡後 3 分鐘內）","抗組織胺可緩解搔癢","頑固搔癢可短期外用類固醇","內科疾病引起的癢需治療原發疾病","避免抓搔——抓癢會讓癢更嚴重"],
+    prevention:["洗澡水溫不宜過熱（37–40°C）、時間勿過長","使用無香料、無皂鹼的清潔產品","空氣乾燥時使用加濕器","穿著棉質透氣衣物、避免羊毛或合成纖維直接接觸","充足水分、避免過度乾燥的環境"],
+    questions:["需要驗血排除肝腎和甲狀腺問題嗎？","保濕和清潔該怎麼做？","止癢藥可以長期使用嗎？"],
+    watchOuts:["黃疸","解尿改變","淋巴結腫大","發燒或盜汗"]
+  },
+  { id:"fever", cat:"general", emoji:"🌡️", name:"發燒", short:">38°C，多為感染",
+    summary:"發燒本身不是疾病，是身體對抗感染或發炎的反應。重點在「為什麼發燒」而非單純退燒。",
+    causes:["上呼吸道感染","泌尿道感染","腸胃炎","肺炎","蜂窩性組織炎","旅遊相關感染","自體免疫疾病","少見：菌血症、心內膜炎"],
+    green:"輕度發燒、合併感冒症狀、活力尚可",
+    amber:"高燒（>39°C）、持續超過 3 天、合併局部疼痛、近期手術後",
+    red:"發燒合併意識改變、頸部僵硬、皮膚紫斑、嚴重脫水、3 個月以下嬰兒任何發燒、免疫低下者發燒",
+    depts:["家醫科","感染科"],
+    deptsAlt:["小兒科","急診"],
+    treatment:["重點是找出感染源並對症治療，不是單純退燒","退燒藥（普拿疼、ibuprofen）用於緩解不適，不需強行降到正常","充足水分、休息、清淡飲食","細菌感染需要抗生素（不可自行買來用）","物理降溫（溫水擦拭、冰枕）可輔助但不單獨使用"],
+    prevention:["接種疫苗：流感、新冠、肺炎鏈球菌、麻疹等","勤洗手、出入醫院或人多場所戴口罩","食物衛生、避免生食生水","旅遊前查詢目的地疫情並接種旅遊疫苗","免疫低下者需特別注意感染預防"],
+    questions:["可能的感染源在哪裡？需要驗尿、驗血或照 X 光嗎？","退燒藥怎麼用比較安全？","什麼狀況下需要立即回診？"],
+    watchOuts:["意識改變","頸部僵硬","皮膚紫斑","嚴重脫水","3 個月以下嬰兒任何發燒"]
+  },
+  { id:"fatigue", cat:"general", emoji:"😴", name:"疲倦", short:"睡眠、貧血、甲狀腺",
+    summary:"持續性疲倦如果排除睡眠不足，可能來自貧血、甲狀腺、糖尿病、慢性感染、憂鬱等多種原因。",
+    causes:["睡眠不足、睡眠呼吸中止症","貧血","甲狀腺功能低下","糖尿病","慢性感染","憂鬱、焦慮","維生素缺乏","少見：心臟、腎臟、惡性腫瘤"],
+    green:"短期、與壓力或睡眠不足相關、調整後改善",
+    amber:"持續超過 1 個月、合併體重變化、影響工作或生活",
+    red:"合併不明原因體重大幅減輕、夜間盜汗、淋巴結腫大、解黑便或嘔血",
+    depts:["家醫科"],
+    deptsAlt:["新陳代謝科","身心科"],
+    treatment:["先排除可治療的原因：貧血、甲狀腺低下、糖尿病、憂鬱","補充缺乏的營養（鐵、B12、維生素 D）","睡眠呼吸中止症使用陽壓呼吸器","慢性疲勞症候群以漸進式運動與認知行為治療","避免過度依賴咖啡因與提神飲料"],
+    prevention:["維持規律作息，確保 7–8 小時睡眠","均衡飲食、多攝取鐵質與蛋白質","規律運動（聽起來矛盾，但運動反而能增加精力）","學習壓力管理與放鬆技巧","定期健康檢查"],
+    questions:["可以做哪些篩檢？","睡眠品質要怎麼評估？","生活作息和飲食要怎麼調整？"],
+    watchOuts:["體重明顯減輕","夜間盜汗","淋巴結腫大","解黑便或嘔血"]
+  },
+  { id:"weightloss", cat:"general", emoji:"⚖️", name:"體重減輕", short:"非自願性需查清",
+    summary:"非自願性體重減輕（6 個月內 >5%）需要醫療評估。",
+    causes:["甲狀腺機能亢進","糖尿病","慢性感染","發炎性腸道疾病","憂鬱","慢性疾病","惡性腫瘤"],
+    green:"刻意飲食控制或運動引起",
+    amber:"非刻意減重 >5%、合併食慾改變、持續超過 1–2 個月",
+    red:"明顯快速減重合併腹痛、解黑便、夜間盜汗、不明原因發燒、淋巴結腫大、吞嚥困難",
+    depts:["家醫科"],
+    deptsAlt:["新陳代謝科","腸胃內科","血液腫瘤科"],
+    treatment:["治療策略完全取決於原因——必須先找到病因","甲狀腺亢進使用抗甲狀腺藥物或放射碘治療","糖尿病需藥物或胰島素控制","發炎性腸道疾病使用免疫調節藥物","營養不良者需高熱量蛋白飲食補充"],
+    prevention:["每月固定時間測體重，建立基準線","定期健康檢查（特別 50 歲以上）","察覺食慾或排便習慣改變要記錄回報","維持規律飲食、不極端節食","家族有腫瘤病史者依指引做篩檢"],
+    questions:["需要做哪些檢查？","食慾和飲食要怎麼記錄回報？","哪些紅旗症狀我應該追蹤？"],
+    watchOuts:["腹痛或解黑便","夜間盜汗","發燒","淋巴結腫大","吞嚥困難"]
+  },
+  { id:"insomnia", cat:"mind", emoji:"🌙", name:"失眠", short:"入睡困難、淺眠、早醒",
+    summary:"短期多與壓力相關，長期失眠常與焦慮、憂鬱、慢性疾病相關。",
+    causes:["壓力","焦慮症、憂鬱症","咖啡因、3C","睡眠呼吸中止症","慢性疼痛","甲狀腺機能亢進","更年期"],
+    green:"短期（<2 週）、與明確事件相關、能自行調整",
+    amber:"持續超過 1 個月、影響白天功能、合併情緒低落",
+    red:"伴隨自殺念頭或想傷害自己的想法——請立即撥打 1925",
+    depts:["家醫科","身心科","精神科"],
+    treatment:["失眠認知行為治療（CBT-I）是首選，效果優於長期用藥","短期可使用安眠藥（建議 ≤4 週）","褪黑激素對時差或老人失眠有幫助","睡眠呼吸中止症需陽壓呼吸器治療","治療底層的焦慮、憂鬱、慢性疼痛"],
+    prevention:["固定就寢與起床時間（包括週末）","睡前 1 小時遠離 3C 與藍光","下午後避免咖啡因，睡前避免酒精","臥室保持涼爽、安靜、黑暗，只用來睡覺","白天規律運動但避免睡前 3 小時內劇烈運動"],
+    questions:["除了藥物還有哪些非藥物治療？","常見的安眠藥有哪些優缺點？","睡眠衛教有哪些可以先試？"],
+    watchOuts:["持續無法入睡","白天功能受損","出現自我傷害想法（請立即撥 1925）"]
+  },
+  { id:"anxiety", cat:"mind", emoji:"💭", name:"焦慮／恐慌", short:"持續擔心、心悸",
+    summary:"若強度與情境不成比例、伴隨身體症狀影響生活，可能是焦慮症或恐慌症。",
+    causes:["生活壓力","廣泛性焦慮症","恐慌症","社交焦慮","創傷後壓力症候群","甲狀腺機能亢進","咖啡因"],
+    green:"特定情境引起、能自行緩解、不影響生活",
+    amber:"頻繁發作、合併身體症狀、影響睡眠或工作",
+    red:"嚴重症狀合併自我傷害想法、無法照顧自己——請撥 1925",
+    depts:["身心科","精神科","家醫科"],
+    treatment:["認知行為治療（CBT）對焦慮症與恐慌症效果明確","選擇性血清素回收抑制劑（SSRI）是常用長期藥物","Benzodiazepines 可短期使用，避免長期成癮","正念、放鬆訓練、瑜珈、規律運動有輔助效果","恐慌發作時使用呼吸法（4-7-8）讓自己慢下來"],
+    prevention:["減少咖啡因與酒精","規律運動是天然的抗焦慮藥","建立支持系統，與信任的人聊聊","學習壓力管理技巧（正念、冥想、呼吸練習）","維持規律睡眠"],
+    questions:["這是焦慮還是身體疾病？需要排除哪些？","有哪些非藥物的處理方法？","藥物有哪些選擇？"],
+    watchOuts:["無法照顧自己","出現自我傷害想法（請撥 1925）","脫離現實感"]
+  },
+  { id:"depressed", cat:"mind", emoji:"☁️", name:"情緒低落／憂鬱", short:"持續低落、無動力",
+    summary:"若持續超過 2 週、影響日常功能，可能是憂鬱症，可治療且越早介入越好。",
+    causes:["壓力、生活事件","重度憂鬱症","產後憂鬱","季節性情緒障礙","甲狀腺機能低下","慢性疾病","物質使用"],
+    green:"短期低落、與明確事件相關、仍能維持日常",
+    amber:"持續超過 2 週、影響工作或人際、出現睡眠或食慾改變",
+    red:"自殺念頭、自我傷害行為、無法照顧自己——請立即撥打 1925 或前往急診",
+    depts:["身心科","精神科"],
+    deptsAlt:["家醫科"],
+    treatment:["心理治療（CBT、人際治療）對輕中度憂鬱有效","抗憂鬱藥（SSRI、SNRI）通常需 4–6 週起效","規律運動的抗憂鬱效果可媲美藥物","重度或頑固型可考慮 rTMS、ECT 等進階治療","產後憂鬱需特別關注，可獲得專業協助"],
+    prevention:["維持規律作息與運動","建立支持網絡、不要獨自承受","限制酒精——它會加重憂鬱","曬太陽、走出戶外（季節性憂鬱特別需要）","定期回診、按醫囑服藥，不要自行停藥"],
+    questions:["有哪些治療選擇？","身邊的人可以怎麼陪伴？","萬一有自我傷害想法，我可以怎麼做？"],
+    watchOuts:["持續超過 2 週","失去興趣","出現自我傷害想法（請撥 1925）"]
+  },
+  { id:"kidfever", cat:"kid", emoji:"🧒", name:"孩童發燒", short:"年齡與活力是判斷重點",
+    summary:"孩童發燒最重要的不是體溫，而是「年齡」和「活力／食慾」。3 個月以下嬰兒任何發燒都需立即就醫。",
+    causes:["上呼吸道感染","腸胃炎","泌尿道感染","中耳炎","幼兒急疹","川崎病","少見：腦膜炎、敗血症"],
+    green:"38–38.5°C、活力食慾尚可、能逗笑、有喝水",
+    amber:">39°C、持續超過 3 天、活力下降但仍可進食",
+    red:"3 個月以下嬰兒任何發燒、嗜睡叫不醒、抽搐、皮膚紫斑、呼吸急促、嚴重脫水、頸部僵硬",
+    depts:["小兒科"],
+    treatment:["3 個月以下嬰兒任何發燒都需立即就醫，不可自行用藥","6 個月以上可使用兒童劑量普拿疼或 ibuprofen","補充水分（母奶、配方奶、白開水、電解質液）","退燒藥用於緩解不適，38.5°C 以下可不必硬退","切勿混用阿斯匹靈（瑞氏症候群風險）"],
+    prevention:["按時接種疫苗（6 合 1、肺炎鏈球菌、流感、麻疹等）","勤洗手、避免接觸生病的人","哺餵母乳可提供被動免疫","均衡飲食、充足睡眠","流感季節避免出入人多場所"],
+    questions:["退燒藥怎麼選？多久可以給一次？","哪些狀況需要立即回診？","可不可以推測感染源？"],
+    watchOuts:["3 個月以下任何發燒","嗜睡叫不醒","抽搐","皮膚紫斑","呼吸急促","頸部僵硬"]
+  },
+  { id:"kidvomit", cat:"kid", emoji:"🍼", name:"孩童嘔吐／腹瀉", short:"重點在預防脫水",
+    summary:"孩童急性腸胃炎多為病毒，重點在補水與觀察脫水徵兆。",
+    causes:["病毒性腸胃炎","食物相關","幽門狹窄","腸套疊"],
+    green:"嘔吐幾次、能小口補水、尿量正常",
+    amber:"持續超過 24 小時、無法進食、活力下降",
+    red:"嚴重脫水（口乾、尿少、哭無淚、囟門凹陷）、嘔吐物有血或膽汁、果醬樣血便、抽搐",
+    depts:["小兒科","急診"],
+    treatment:["重點：少量多次補充電解質液（每 5–10 分鐘 5–10ml）","勿用運動飲料（糖分太高會加重腹瀉）","逐步從清淡食物（米湯、稀飯、香蕉）恢復","哺乳期間繼續餵母奶，配方奶可正常濃度","止瀉藥不建議用於兒童"],
+    prevention:["按時接種輪狀病毒疫苗","奶瓶、餐具確實消毒","副食品階段嚴格食物衛生","幼兒勤洗手、進食前家長手部清潔","與生病的小朋友保持距離"],
+    questions:["怎麼判斷脫水程度？","電解質補充液要怎麼喝？","什麼時候可以恢復正常飲食？"],
+    watchOuts:["嚴重脫水","嘔吐物有血或膽汁","果醬樣血便","抽搐","活力大幅下降"]
+  },
+  /* ===== 頭頸部（補充）===== */
+  { id:"nosebleed", cat:"head", emoji:"🩸", name:"流鼻血", short:"多為前鼻部血管破裂",
+    summary:"九成流鼻血來自鼻中膈前下方的血管叢，多數可在家自行止血。少數可能與凝血、高血壓、腫瘤相關。",
+    causes:["挖鼻孔、用力擤鼻","空氣乾燥","過敏性鼻炎","鼻竇感染","凝血藥物（華法林、阿斯匹靈）","少見：鼻中膈彎曲、鼻腔腫瘤、凝血疾病"],
+    green:"短暫流血、按壓後止血、無其他症狀",
+    amber:"反覆發作、量多、持續超過 20 分鐘無法止住",
+    red:"大量出血合併頭暈或臉色蒼白、外傷後流血、抗凝血藥使用者大量鼻血",
+    treatment:["身體前傾（不要後仰），用拇指食指捏住鼻翼下方軟骨 10–15 分鐘","可在鼻樑冰敷協助止血","止血後 24 小時不要用力擤鼻或挖鼻孔","空氣乾燥時用凡士林塗抹鼻黏膜","反覆發作可由耳鼻喉科電燒止血"],
+    prevention:["避免挖鼻孔、用力擤鼻","乾燥季節使用加濕器","控制過敏性鼻炎與鼻竇炎","控制血壓","抗凝血藥使用者注意鼻黏膜保養"],
+    depts:["耳鼻喉科","家醫科"],
+    questions:["為什麼會反覆流鼻血？","需要做檢查排除其他原因嗎？","可以怎麼預防再發？"],
+    watchOuts:["大量出血無法止住","多次發作合併頭暈","解出黑便（可能吞下大量血）","抗凝血藥使用者新發鼻血"]
+  },
+  { id:"dysphagia", cat:"head", emoji:"🥄", name:"吞嚥困難", short:"食物或藥丸吞不下",
+    summary:"吞嚥困難可能來自喉嚨、食道或神經肌肉，需鑑別卡住的位置與是固體還是液體都會卡。",
+    causes:["胃食道逆流引起的食道炎","食道狹窄","食道蠕動異常","中風、巴金森氏症等神經疾病","年長者吞嚥肌力下降","少見但嚴重：食道癌、咽喉癌"],
+    green:"偶爾大口進食或藥丸吞嚥不順、無進行性惡化",
+    amber:"持續超過 2 週、體重減輕、固體食物越來越難吞",
+    red:"突發無法吞嚥、嚴重嗆咳、合併聲音改變或頸部腫塊、進行性快速惡化",
+    treatment:["胃食道逆流引起者使用 PPI 並調整飲食","食道狹窄可由腸胃科做擴張術","神經性吞嚥障礙需吞嚥治療師訓練","食道癌依分期手術、放化療","吞嚥訓練、調整食物質地（增稠液體）"],
+    prevention:["細嚼慢嚥、避免大口吞食","胃食道逆流者飯後不立即躺下","年長者定期評估吞嚥功能","戒菸戒酒（食道癌主要風險）","定期口腔與牙齒保健"],
+    depts:["耳鼻喉科","腸胃內科"],
+    deptsAlt:["神經內科","復健科"],
+    questions:["卡在哪個位置？需要做胃鏡或攝影檢查嗎？","食物質地要怎麼調整？","有沒有需要排除的腫瘤可能？"],
+    watchOuts:["體重明顯減輕","喝水也會嗆到","聲音沙啞合併頸部腫塊","解黑便"]
+  },
+  { id:"tinnitus", cat:"head", emoji:"🔔", name:"耳鳴", short:"持續或間歇性的耳內聲音",
+    summary:"耳鳴本身是症狀不是疾病，多數與聽力問題相關。突發性單側耳鳴是急症。",
+    causes:["聽力老化、噪音傷害","耳垢栓塞","中耳炎","梅尼爾氏症","壓力、失眠","顳顎關節問題","藥物副作用","少見：聽神經瘤"],
+    green:"偶發、雙側、與疲勞或噪音相關",
+    amber:"持續超過 2 週、影響睡眠、合併聽力下降",
+    red:"突發單側耳鳴合併聽力喪失（72 小時內治療效果最好）、合併眩暈與單側無力",
+    treatment:["突發性聽力喪失需 72 小時內就醫使用類固醇","耳垢栓塞需請耳鼻喉科清除","梅尼爾氏症需限鈉飲食與止暈藥","認知行為治療對慢性耳鳴有幫助","助聽器或耳鳴遮蔽器可改善困擾"],
+    prevention:["避免長時間暴露於高音量","耳機音量不超過 60%、單次不超過 60 分鐘","控制血壓與血脂","減少咖啡因與酒精","壓力管理"],
+    depts:["耳鼻喉科"],
+    questions:["這是什麼原因？需要做聽力檢查嗎？","有什麼治療可以嘗試？","什麼情況下要立即回診？"],
+    watchOuts:["突發單側耳鳴與聽力喪失","合併眩暈","合併單側無力或臉部麻木"]
+  },
+  { id:"blurredvision", cat:"head", emoji:"👓", name:"視力模糊", short:"屈光、白內障或更嚴重眼病",
+    summary:"視力模糊原因從近視、老花到視網膜病變、青光眼都可能，急性視力改變需立即就醫。",
+    causes:["近視、遠視、老花、散光","乾眼症","白內障","糖尿病視網膜病變","黃斑部病變","視網膜剝離","急性青光眼","視神經炎"],
+    green:"輕微模糊、與眼鏡度數有關、休息後改善",
+    amber:"持續模糊、看東西扭曲、合併飛蚊增加",
+    red:"突發單眼或雙眼視力減退、看到閃光與大量飛蚊（疑似視網膜剝離）、嚴重眼痛合併頭痛噁心、半邊視野缺損（疑似中風）",
+    treatment:["屈光問題配戴眼鏡或考慮雷射手術","白內障可手術置換人工水晶體","糖尿病視網膜病變需血糖控制與雷射治療","黃斑部病變使用眼內注射","視網膜剝離需緊急手術（24–72 小時黃金期）"],
+    prevention:["定期眼科檢查（40 歲後每 1–2 年）","糖尿病、高血壓患者每年眼底檢查","用眼 30 分鐘休息 5–10 分鐘","戶外戴防紫外線太陽眼鏡","均衡飲食補充葉黃素、Omega-3"],
+    depts:["眼科"],
+    questions:["這是哪種視力問題？需要做眼底檢查嗎？","什麼情況下變化要立即回診？","可以怎麼保養？"],
+    watchOuts:["突發視力減退","看到閃光或大量飛蚊","視野缺損","嚴重眼痛合併噁心","視物變形"]
+  },
+  /* ===== 口腔牙齒 ===== */
+  { id:"toothache", cat:"oral", emoji:"🦷", name:"牙痛", short:"蛀牙、牙髓炎或牙周病",
+    summary:"牙痛多由蛀牙、牙髓炎或牙周問題引起。劇烈跳痛或合併臉部腫脹，是感染擴散的警訊。",
+    causes:["蛀牙","牙髓炎（神經發炎）","牙根尖周圍炎","牙周病","牙齒裂痕","智齒冠周炎","咬合創傷"],
+    green:"輕微酸痛、對冷熱敏感、與特定食物相關",
+    amber:"自發性疼痛、持續抽痛、影響進食或睡眠",
+    red:"臉部明顯腫脹、發燒、張口困難、吞嚥困難（感染可能擴散）",
+    treatment:["可使用普拿疼或 NSAIDs 緩解疼痛","用溫鹽水漱口、避免冷熱刺激","蛀牙需補牙；深層蛀牙可能需根管治療","牙周病需洗牙與深部清潔","臉部腫脹需立即看牙醫，可能需抗生素"],
+    prevention:["每天刷牙 2 次、使用牙線或牙間刷","氟化物牙膏可預防蛀牙","減少含糖飲料與零食","定期洗牙（每半年一次）","出現問題盡早處理，不要拖到神經發炎"],
+    depts:["牙科"],
+    deptsAlt:["口腔顎面外科（嚴重感染或智齒）"],
+    questions:["這顆牙還救得回來嗎？需要根管治療嗎？","有沒有需要拔除？","怎麼預防其他牙齒出問題？"],
+    watchOuts:["臉部腫脹","發燒","張口困難","吞嚥困難"]
+  },
+  { id:"gumbleeding", cat:"oral", emoji:"🪥", name:"牙齦腫痛／出血", short:"牙齦炎或牙周病",
+    summary:"刷牙流血最常見的原因是牙齦炎。長期忽略會發展成牙周病，導致牙齒鬆動、脫落。",
+    causes:["牙菌斑堆積引起的牙齦炎","牙周病","懷孕期荷爾蒙變化","維生素 C 缺乏","凝血疾病或抗凝血藥","少見：白血病"],
+    green:"刷牙時偶爾流血、無明顯腫脹",
+    amber:"持續性流血、牙齦明顯紅腫、口臭",
+    red:"全身性出血傾向（鼻血、皮下瘀青、解黑便）、牙齦自發性大量出血",
+    treatment:["徹底潔牙：刷牙、牙線每天兩次","牙醫師洗牙清除牙結石","牙周病可能需深部刮除或牙周手術","懷孕期可改用軟毛牙刷與溫和潔牙","補充維生素 C 與均衡飲食"],
+    prevention:["正確刷牙：貝氏刷牙法、軟毛牙刷","每天使用牙線（牙齒間刷不到的地方）","每 6 個月洗牙與檢查","戒菸（牙周病主要風險因子）","控制糖尿病（會加重牙周病）"],
+    depts:["牙科","牙周病科"],
+    questions:["這已經發展到牙周病了嗎？","需要做哪些治療？","在家可以怎麼照顧？"],
+    watchOuts:["牙齒鬆動","臉部腫脹","全身性出血傾向","嚴重口臭"]
+  },
+  { id:"mouthulcer", cat:"oral", emoji:"👄", name:"口腔潰瘍", short:"嘴破、復發性口瘡",
+    summary:"嘴破多為復發性口瘡，會自行癒合。但長時間不癒或合併其他症狀，需排除其他疾病。",
+    causes:["復發性口瘡（壓力、免疫、創傷）","咬到、燙傷","維生素 B12、葉酸、鐵質缺乏","病毒感染（皰疹）","自體免疫疾病（如貝賽特氏症）","少見但嚴重：口腔癌"],
+    green:"小型（<1cm）、單發、2 週內癒合",
+    amber:"反覆發作、多發性、影響進食、合併其他黏膜病變",
+    red:"超過 3 週不癒合、變硬、邊緣不規則、合併頸部腫塊（疑似口腔癌）",
+    treatment:["局部凝膠（含類固醇或局麻藥）緩解疼痛","漱口水（含 chlorhexidine）幫助癒合","避免辛辣、酸性、過熱食物","補充維生素 B、葉酸、鐵質","頻繁發作可請醫師評估免疫疾病"],
+    prevention:["減少壓力、規律作息","避免咬到、用過硬牙刷","均衡飲食補充維生素","戒菸戒檳榔（口腔癌主要風險）","定期口腔檢查（特別中老年）"],
+    depts:["牙科","口腔顎面外科"],
+    deptsAlt:["皮膚科","過敏免疫風濕科"],
+    questions:["為什麼會反覆嘴破？需要驗血嗎？","什麼情況需要切片排除口腔癌？","可以擦什麼藥緩解？"],
+    watchOuts:["超過 3 週不癒合","變硬或不規則","頸部摸到腫塊","快速變大"]
+  },
+  { id:"badbreath", cat:"oral", emoji:"💨", name:"口臭", short:"口腔、鼻咽或胃部都可能",
+    summary:"九成以上口臭來自口腔本身（牙周病、舌苔、蛀牙）。少數來自鼻咽、胃部或全身性疾病。",
+    causes:["牙周病、牙菌斑、蛀牙","舌苔過厚","口乾症","扁桃腺結石","鼻竇炎、鼻涕倒流","胃食道逆流","糖尿病、肝腎疾病"],
+    green:"偶發、與特定食物（蒜、洋蔥）相關",
+    amber:"持續口臭、合併牙齦問題、自己感覺得到",
+    red:"合併口乾多尿體重減輕（疑似糖尿病）、黃疸（疑似肝病）",
+    treatment:["徹底口腔清潔（包含刷舌頭）","治療牙周病、蛀牙","充足水分避免口乾","治療鼻竇炎或胃食道逆流","糖尿病或肝腎問題引起者需治療原發疾病"],
+    prevention:["每天刷牙 2 次與使用牙線","刷牙時記得清潔舌頭","定期洗牙","減少含糖飲料、戒菸","充足水分、避免長時間空腹"],
+    depts:["牙科","耳鼻喉科"],
+    deptsAlt:["腸胃內科"],
+    questions:["口臭是來自哪裡？口腔還是其他？","需要做哪些檢查？","怎樣的清潔可以改善？"],
+    watchOuts:["合併口乾多尿","體重減輕","黃疸","頸部腫塊"]
+  },
+  /* ===== 腹部（補充）===== */
+  { id:"hemorrhoids", cat:"abdomen", emoji:"🍑", name:"痔瘡", short:"肛門靜脈曲張、便後出血",
+    summary:"痔瘡是肛門靜脈曲張，分內痔與外痔。便血、肛門腫脹疼痛是主要症狀，多數可保守治療。",
+    causes:["長期便秘、用力排便","久坐或久站","懷孕、生產","年齡增長","低纖維飲食","肝硬化引起的門脈高壓"],
+    green:"偶發出血、輕微肛門不適",
+    amber:"反覆出血、明顯腫脹、疼痛、影響日常活動",
+    red:"大量出血合併頭暈、發燒合併肛門劇痛（疑似肛門膿瘍）、解黑便（可能是上消化道出血而非痔瘡）",
+    treatment:["增加水分與纖維、避免用力排便","痔瘡藥膏與栓劑緩解症狀","溫水坐浴（每次 10–15 分鐘）","內痔嚴重者可橡皮筋結紮、硬化劑注射","第 III–IV 度或外痔血栓可能需手術"],
+    prevention:["高纖飲食、充足水分（每天 1500–2000ml）","規律運動","不要久坐或久蹲廁所、不要用力排便","便意來了不要憋","懷孕期間多做凱格爾運動"],
+    depts:["大腸直腸外科","家醫科"],
+    questions:["這是幾度痔瘡？需要手術嗎？","便血會不會是其他問題？需要大腸鏡嗎？","在家可以怎麼護理？"],
+    watchOuts:["大量出血合併頭暈","解黑便","便血合併體重減輕","發燒合併劇痛"]
+  },
+  /* ===== 泌尿生殖 ===== */
+  { id:"dysuria", cat:"uro", emoji:"💧", name:"解尿疼痛／灼熱", short:"多為泌尿道感染",
+    summary:"解尿疼痛或灼熱感是泌尿道感染最典型的症狀，女性比男性常見。男性出現需特別評估。",
+    causes:["膀胱炎（最常見，特別是女性）","尿道炎","攝護腺炎（男性）","性傳染病","泌尿道結石","膀胱過動症"],
+    green:"輕微灼熱、無發燒、症狀剛開始",
+    amber:"持續超過 24–48 小時、合併頻尿急尿、輕微下腹悶痛",
+    red:"高燒合併腰側痛（疑似腎盂腎炎）、寒顫、嘔吐、孕婦出現任何感染症狀、男性合併攝護腺問題",
+    treatment:["單純膀胱炎口服抗生素 3–7 天","充足水分加速細菌排出","可使用抗痙攣藥緩解症狀","攝護腺炎需較長療程抗生素","性傳染病需伴侶同時治療"],
+    prevention:["每天 1500–2000ml 水分","解尿不要憋、性行為後排尿","女性如廁後從前往後擦","避免使用刺激性女性私處清潔產品","反覆感染者可考慮預防性抗生素或改變避孕方式"],
+    depts:["泌尿科","家醫科"],
+    deptsAlt:["婦產科（女性）","感染科"],
+    questions:["這是膀胱炎還是更上面的感染？","需要驗尿或做泌尿道影像嗎？","怎麼預防再發？"],
+    watchOuts:["高燒與腰側痛","寒顫與嘔吐","血尿","孕婦感染"]
+  },
+  { id:"frequenturine", cat:"uro", emoji:"🚻", name:"頻尿", short:"白天 >8 次、夜間 >2 次",
+    summary:"頻尿可能是膀胱問題、攝護腺問題（男性）、糖尿病、利尿劑使用，或單純喝水太多。",
+    causes:["泌尿道感染","膀胱過動症","攝護腺肥大（男性）","糖尿病、尿崩症","咖啡因、利尿劑","懷孕","少見：膀胱腫瘤"],
+    green:"與飲水量相關、無其他症狀",
+    amber:"持續、影響睡眠、合併解尿不適或漏尿",
+    red:"合併血尿、體重減輕、骨盆持續疼痛",
+    treatment:["膀胱過動症使用抗膽鹼藥物或 mirabegron","膀胱訓練：定時解尿、骨盆底肌運動","攝護腺肥大用藥（α 阻斷劑、5α 還原酶抑制劑）或手術","糖尿病需嚴格血糖控制","減少咖啡因與睡前飲水"],
+    prevention:["適量水分、避免一次大量飲水","睡前 2 小時減少喝水","減少咖啡因與酒精","規律凱格爾運動強化骨盆底肌","控制血糖、體重"],
+    depts:["泌尿科","家醫科"],
+    deptsAlt:["新陳代謝科","婦產科"],
+    questions:["這是膀胱還是其他系統的問題？","需要做尿動力學檢查嗎？","有哪些非藥物的方法？"],
+    watchOuts:["血尿","體重減輕","骨盆持續疼痛","新發夜尿合併口渴多飲"]
+  },
+  { id:"hematuria", cat:"uro", emoji:"🩸", name:"血尿", short:"任何血尿都需就醫",
+    summary:"血尿可能是泌尿道感染、結石或腫瘤的警訊。任何肉眼可見的血尿都應就醫評估。",
+    causes:["泌尿道感染","泌尿道結石","攝護腺肥大或炎症","腎臟發炎","劇烈運動引起的暫時性血尿","抗凝血藥物","少見但嚴重：膀胱癌、腎臟癌"],
+    green:"運動後暫時性、女性月經期、能自行緩解",
+    amber:"反覆肉眼血尿、合併解尿不適或腰側痛",
+    red:"無痛性肉眼血尿（特別 50 歲以上、抽菸者，需立即排除腫瘤）、合併大量出血或血塊、合併發燒寒顫",
+    treatment:["治療策略依原因決定","泌尿道感染需抗生素","結石依大小選擇排石、體外震波或內視鏡","腫瘤依分期手術、化療或免疫治療","所有 50 歲以上的無痛血尿都需做膀胱鏡與影像檢查"],
+    prevention:["充足水分（特別是腎結石病史者）","戒菸（膀胱癌主要風險因子）","控制高血壓與糖尿病","避免長期接觸染料、化學溶劑","定期健康檢查含尿液常規"],
+    depts:["泌尿科"],
+    questions:["血尿來源在哪裡？需要做哪些檢查？","抽菸或職業暴露需要特別注意嗎？","什麼情況需要做進階檢查？"],
+    watchOuts:["無痛性血尿（50 歲以上特別注意）","體重減輕","合併血塊或大量出血","合併發燒寒顫"]
+  },
+  /* ===== 婦科 ===== */
+  { id:"dysmenorrhea", cat:"gyn", emoji:"🌸", name:"經痛", short:"原發性或子宮內膜異位症",
+    summary:"經痛分為原發性（與經血排出有關）與續發性（背後有疾病，如子宮內膜異位症）。",
+    causes:["原發性經痛（前列腺素過多）","子宮內膜異位症","子宮肌瘤","子宮腺肌症","骨盆腔感染","子宮內避孕器"],
+    green:"輕度、來潮第 1–2 天、休息與止痛藥可緩解",
+    amber:"年齡 25 歲後新發痛經、痛感加劇、影響工作或學業",
+    red:"合併大量出血（每小時換衛生棉 1 次以上）、嚴重虛脫、孕期下腹痛（疑似子宮外孕或流產）",
+    treatment:["NSAIDs 效果優於普拿疼，月經前一天就開始效果更好","熱敷下腹","口服避孕藥可顯著減輕經痛","子宮內膜異位症需專科評估，可能需藥物或手術","規律有氧運動可減少經前不適"],
+    prevention:["規律運動可減少經前症候群","減少咖啡因、酒精、加工食品","補充 Omega-3、鎂可能有幫助","適當壓力管理","年輕時的嚴重經痛建議盡早評估"],
+    depts:["婦產科","家醫科"],
+    questions:["這是原發性還是有底層疾病？需要做超音波嗎？","止痛藥要怎麼用最有效？","什麼情況需要進一步檢查？"],
+    watchOuts:["大量出血","嚴重虛脫","痛在非經期出現","孕期下腹痛"]
+  },
+  { id:"periodirreg", cat:"gyn", emoji:"📅", name:"月經異常", short:"週期、量或時間異常",
+    summary:"月經異常包括週期過短／過長、經血過多／過少、無月經等。原因從荷爾蒙、壓力到子宮疾病都可能。",
+    causes:["多囊性卵巢症候群（PCOS）","甲狀腺問題","壓力、體重劇變、過度運動","子宮肌瘤、瘜肉","荷爾蒙避孕藥","懷孕（先排除）","更年期前期","少見但嚴重：子宮內膜癌（停經後出血）"],
+    green:"偶發週期變動、與壓力或旅行相關、能自行恢復",
+    amber:"持續超過 3 個月不規則、明顯量多或量少",
+    red:"停經後出血（任何情況都需評估子宮內膜癌）、出血量大導致頭暈或休克、孕期出血",
+    treatment:["先驗孕、抽血查甲狀腺與荷爾蒙","多囊性卵巢可用避孕藥調經、生活型態改變","子宮肌瘤依大小與症狀決定觀察、藥物或手術","荷爾蒙避孕藥可規律經期","停經後出血需做子宮內膜採樣"],
+    prevention:["維持理想體重（過胖過瘦都會影響）","規律但不過度運動","壓力管理","定期婦科檢查","記錄月經週期幫助辨識變化"],
+    depts:["婦產科"],
+    deptsAlt:["新陳代謝科（甲狀腺、PCOS）"],
+    questions:["這是荷爾蒙問題還是子宮問題？","可以怎麼調經？需要避孕藥嗎？","會影響生育嗎？"],
+    watchOuts:["停經後出血","出血量大到頭暈","孕期出血","合併嚴重腹痛"]
+  },
+  { id:"discharge", cat:"gyn", emoji:"💮", name:"陰道分泌物異常", short:"顏色、氣味、量改變",
+    summary:"正常陰道有少量分泌物。顏色、氣味、質地或量明顯改變，多為感染。",
+    causes:["細菌性陰道炎（魚腥味、灰白色）","念珠菌感染（白色凝乳狀、強烈搔癢）","陰道滴蟲感染","骨盆腔感染","性傳染病（淋病、披衣菌）","荷爾蒙變化（懷孕、避孕藥）"],
+    green:"清澈或乳白、無異味、無搔癢",
+    amber:"明顯異味、顏色改變、搔癢或刺痛",
+    red:"合併下腹痛、發燒（疑似骨盆腔感染）、出血、孕婦分泌物異常",
+    treatment:["細菌性陰道炎使用 metronidazole","念珠菌感染使用抗黴菌藥（外用或口服）","滴蟲感染需與性伴侶同時治療","性傳染病需完整療程並通知伴侶","骨盆腔感染需較長療程抗生素"],
+    prevention:["避免使用陰道灌洗、香味產品","內褲選棉質透氣、白天勤換","性行為使用保險套","控制血糖（糖尿病容易反覆感染）","避免長時間穿濕泳衣或運動服"],
+    depts:["婦產科"],
+    questions:["這是哪種感染？需要驗檢體嗎？","性伴侶要不要一起治療？","怎麼避免反覆發作？"],
+    watchOuts:["合併下腹痛或發燒","出血","孕期分泌物大量增加或破水"]
+  },
+  { id:"menopause", cat:"gyn", emoji:"🌷", name:"更年期症狀", short:"熱潮紅、失眠、情緒波動",
+    summary:"更年期是停經前後的過渡，雌激素下降引起多種症狀。多數可緩解，少數需要荷爾蒙治療。",
+    causes:["卵巢功能下降（自然或手術後）","年齡通常 45–55 歲","早發性更年期（<40 歲）需評估原因"],
+    green:"輕度熱潮紅、能適應、不影響生活",
+    amber:"頻繁熱潮紅、失眠、情緒明顯波動、影響工作或關係",
+    red:"停經後出血（需排除子宮內膜癌）、嚴重憂鬱合併自我傷害想法",
+    treatment:["短期荷爾蒙補充（HRT）對熱潮紅、陰道乾燥效果最好","非荷爾蒙藥物（SSRI、gabapentin）可改善熱潮紅","局部雌激素膏改善陰道乾燥","認知行為治療對情緒與失眠有幫助","規律運動、瑜珈、正念有輔助效果"],
+    prevention:["維持理想體重與規律運動","充足鈣與維生素 D 預防骨質疏鬆","戒菸（會加速骨質流失與心血管風險）","定期健檢：骨密度、血脂、乳房檢查","與伴侶與家人保持良好溝通"],
+    depts:["婦產科","家醫科"],
+    deptsAlt:["身心科","新陳代謝科"],
+    questions:["我的症狀適合荷爾蒙治療嗎？風險是什麼？","需要做骨密度檢查嗎？","非藥物的方法有哪些有效？"],
+    watchOuts:["停經後出血","嚴重情緒問題","新發胸痛或心悸","骨折"]
+  },
+  /* ===== 肌肉骨骼（補充）===== */
+  { id:"muscleache", cat:"musculo", emoji:"💪", name:"肌肉痠痛／纖維肌痛", short:"運動後或慢性全身性",
+    summary:"急性肌肉痠痛多與運動、姿勢有關。慢性全身性疼痛需考慮纖維肌痛、發炎性疾病。",
+    causes:["運動後延遲性肌肉痠痛（DOMS）","姿勢不良、肌肉緊繃","纖維肌痛症","風濕性多肌痛","病毒感染（流感）","電解質失衡","藥物（特別是降膽固醇藥）"],
+    green:"運動後 1–2 天、休息可改善",
+    amber:"持續超過 1 週、影響日常活動、合併睡眠問題",
+    red:"嚴重肌肉無力合併小便顏色變深（疑似橫紋肌溶解）、發燒合併肌肉劇痛",
+    treatment:["急性期 NSAIDs、熱敷、輕度伸展","按摩、滾筒放鬆、瑜珈","纖維肌痛使用 SNRI、pregabalin 等藥物","規律運動是最有效的長期治療","物理治療與職能治療有幫助"],
+    prevention:["運動前充分熱身、運動後伸展","循序漸進增加運動強度","充足水分與電解質","均衡飲食、足夠睡眠","維持良好工作姿勢、定期休息"],
+    depts:["復健科","家醫科"],
+    deptsAlt:["過敏免疫風濕科"],
+    questions:["這是運動傷害還是慢性肌痛症？","可以做哪些運動？哪些要避免？","什麼情況需要進一步檢查？"],
+    watchOuts:["小便變濃茶色","嚴重肌肉無力","發燒合併肌痛","體重快速減輕"]
+  },
+  /* ===== 皮膚（補充）===== */
+  { id:"acne", cat:"skin", emoji:"✨", name:"痘痘／青春痘", short:"毛囊皮脂腺發炎",
+    summary:"痘痘是毛囊皮脂腺的慢性發炎，與荷爾蒙、皮脂分泌、痘痘菌與發炎有關。可治療但需耐心。",
+    causes:["青春期或荷爾蒙變化","油性肌膚、皮脂分泌過多","痤瘡桿菌感染","壓力","某些藥物（類固醇、鋰鹽）","多囊性卵巢症候群"],
+    green:"少數粉刺或紅疹、不留疤",
+    amber:"中度發炎、會留下色素或疤痕",
+    red:"嚴重囊腫型痘痘合併瘢痕、突發合併女性特徵改變（疑似內分泌問題）",
+    treatment:["輕度：外用 A 酸或過氧化苯甲醯","中度：合併外用抗生素或口服抗生素","重度：口服 A 酸（需嚴格避孕、定期抽血追蹤）","女性可考慮含抗雄激素的避孕藥","痘疤可由皮膚科做雷射、磨皮、酸類治療"],
+    prevention:["溫和清潔，每天兩次（過度清潔反而惡化）","選用「不致粉刺」的保養與彩妝品","防曬避免痘疤色素沉澱","規律作息、減少壓力","減少高糖、高脂、奶製品（部分研究顯示相關）"],
+    depts:["皮膚科"],
+    questions:["我的痘痘屬於哪一型？適合什麼治療？","治療要多久才會看到效果？","怎麼預防留疤？"],
+    watchOuts:["快速惡化或大範圍囊腫","合併女性化或男性化變化","治療後嚴重副作用"]
+  },
+  { id:"hairloss", cat:"skin", emoji:"💇", name:"落髮", short:"雄性禿、休止期落髮或圓禿",
+    summary:"落髮分為瀰漫性（雄性禿、休止期）和侷限性（圓禿）。多數可治療，但越早介入效果越好。",
+    causes:["雄性禿（遺傳+雄性荷爾蒙）","休止期落髮（產後、壓力、大病後 2–3 個月）","圓禿（自體免疫）","甲狀腺異常","缺鐵性貧血","頭皮疾病","化療、特定藥物"],
+    green:"短期、與明確壓力事件相關、會自行恢復",
+    amber:"持續超過 6 個月、髮量明顯變稀、家族史",
+    red:"突發大片掉髮合併身體其他症狀、頭皮明顯紅腫疼痛",
+    treatment:["雄性禿：男性 finasteride、女性 minoxidil","頭皮塗抹 minoxidil 對男女都有效","圓禿可用局部類固醇或免疫治療","糾正缺鐵、甲狀腺異常等可逆原因","植髮為最終手段（適合穩定期的雄性禿）"],
+    prevention:["均衡飲食、補充鐵與蛋白質","減少染燙、緊綁髮型","壓力管理、充足睡眠","及早就醫——越早治療效果越好","產後落髮多會自然恢復，不需過度緊張"],
+    depts:["皮膚科"],
+    questions:["這是哪一型落髮？可以治療嗎？","治療多久看到效果？要持續多久？","有沒有需要排除的內科問題？"],
+    watchOuts:["頭皮明顯發炎潰瘍","快速大片掉髮","合併全身性症狀"]
+  },
+  { id:"shingles", cat:"skin", emoji:"⚡", name:"帶狀皰疹（皮蛇）", short:"水痘病毒再活化",
+    summary:"帶狀皰疹是水痘病毒再活化，沿單側神經分布。早期治療可減少疼痛與併發症。",
+    causes:["水痘病毒（VZV）再活化","年齡 50 歲以上","免疫低下（壓力、疾病、藥物）","近期重大疾病或手術"],
+    green:"小範圍、輕微疼痛、無其他症狀",
+    amber:"明顯疼痛影響睡眠、範圍擴大",
+    red:"出現在眼部周圍（恐影響視力）、出現在臉部與耳部（可能侵犯神經）、免疫低下者大範圍發作",
+    treatment:["72 小時內使用抗病毒藥（acyclovir、famciclovir）效果最好","止痛藥（NSAIDs、神經痛藥物如 gabapentin）","保持患部清潔乾燥、避免抓破","眼部帶狀皰疹需眼科會診","帶狀皰疹後神經痛需長期治療"],
+    prevention:["50 歲以上可施打帶狀皰疹疫苗","年輕時接種水痘疫苗","維持良好免疫力（睡眠、運動、飲食）","壓力管理","發疹期避免接觸沒得過水痘的孕婦與嬰兒"],
+    depts:["皮膚科","家醫科"],
+    deptsAlt:["眼科（眼部）","神經內科（神經痛）"],
+    questions:["要不要使用抗病毒藥？多久內有效？","怎麼避免後遺神經痛？","會傳染給家人嗎？"],
+    watchOuts:["眼部周圍發疹","臉部或耳部發疹","免疫低下者大範圍水泡","劇烈疼痛影響生活"]
+  },
+  /* ===== 一般（補充）===== */
+  { id:"edema", cat:"general", emoji:"🦵", name:"下肢水腫", short:"心、腎、肝或循環問題",
+    summary:"下肢水腫可能是循環、靜脈、心衰竭、腎或肝疾病的表現。單側水腫需排除深部靜脈血栓。",
+    causes:["長時間站立或久坐","靜脈曲張、靜脈瓣膜功能不全","懷孕","心衰竭、腎臟病、肝硬化","深部靜脈血栓（DVT）","藥物（鈣離子阻斷劑等）","蜂窩性組織炎"],
+    green:"久站或久坐後出現、抬高後消退、雙側對稱",
+    amber:"持續性、合併呼吸困難或體重增加",
+    red:"突發單側腫脹合併疼痛（疑似深部靜脈血栓，可能引起肺栓塞）、單側紅腫熱痛（疑似蜂窩性組織炎）、嚴重呼吸困難",
+    treatment:["抬高雙腿、穿著彈性襪","減少鈉攝取、控制體重","心衰竭使用利尿劑與心臟藥物","深部靜脈血栓需抗凝血治療","治療底層疾病（腎、肝、心）"],
+    prevention:["避免久站久坐，每小時起身活動","規律運動、保持理想體重","低鈉飲食","懷孕後期定時抬腿、彈性襪","長途旅行注意活動下肢、補水"],
+    depts:["家醫科","心臟內科"],
+    deptsAlt:["腎臟科","血管外科","皮膚科"],
+    questions:["這是循環問題還是內科問題？需要做哪些檢查？","彈性襪要怎麼選與穿？","什麼情況需要立即就醫？"],
+    watchOuts:["單側突發腫脹疼痛","呼吸困難","胸痛","紅腫熱痛","體重快速增加"]
+  },
+  { id:"numbness", cat:"general", emoji:"🖐️", name:"手腳麻木／刺痛", short:"神經壓迫或末梢神經病變",
+    summary:"麻木或刺痛多源自神經壓迫、糖尿病神經病變或循環問題。突發單側症狀需排除中風。",
+    causes:["腕隧道症候群（手指麻）","頸椎或腰椎神經壓迫","糖尿病周邊神經病變","維生素 B12 缺乏","循環問題（雷諾氏症）","酒精性神經病變","少見但嚴重：中風、多發性硬化症"],
+    green:"短暫、與姿勢有關、能自行恢復",
+    amber:"持續超過 1 週、影響日常活動、雙側對稱",
+    red:"突發單側肢體麻木合併無力或口齒不清（疑似中風）、合併大小便失禁（疑似馬尾症候群）",
+    treatment:["腕隧道可用護具、物理治療，嚴重者手術","神經壓迫先保守治療（藥物、物理治療），無效再考慮手術","糖尿病神經病變需嚴格血糖控制與神經痛藥物","補充缺乏的維生素 B12","維他命 B 群有助於神經修復"],
+    prevention:["糖尿病嚴格控制血糖","維持理想體重、規律運動","避免長時間相同姿勢","限制酒精","充足且均衡飲食"],
+    depts:["神經內科","復健科"],
+    deptsAlt:["新陳代謝科","骨科"],
+    questions:["這是哪條神經的問題？需要做神經傳導檢查嗎？","可以做哪些運動？","什麼情況需要立即就醫？"],
+    watchOuts:["突發單側麻木合併無力","口齒不清","大小便失禁","會陰部麻木"]
+  },
+  { id:"appetite", cat:"general", emoji:"🍽️", name:"食慾不振", short:"短期感冒或長期需查清",
+    summary:"短期食慾不振常與感冒、壓力相關。長期或合併體重減輕需評估腸胃、內分泌或腫瘤問題。",
+    causes:["急性感染（感冒、腸胃炎）","壓力、焦慮、憂鬱","胃食道逆流、消化性潰瘍","甲狀腺機能低下","慢性肝、腎疾病","藥物副作用","老年人多重原因","少見：腸胃道腫瘤"],
+    green:"短期、與感冒或壓力相關",
+    amber:"持續超過 2 週、合併體重減輕、影響日常",
+    red:"快速體重減輕、合併解黑便或嘔吐物含血、吞嚥困難、夜間盜汗",
+    treatment:["短期感冒引起者多休息、補水即可","治療底層原因（憂鬱、消化性潰瘍、甲狀腺）","少量多餐、選擇喜愛的食物","營養補充品適合短期使用","老人需評估牙齒、藥物、認知等多面向"],
+    prevention:["規律作息、適度運動可促進食慾","避免進食前喝大量湯水或飲料","維持愉快用餐環境","定期健檢及早發現問題","老人居家應有家人陪伴用餐"],
+    depts:["家醫科","腸胃內科"],
+    deptsAlt:["身心科","新陳代謝科"],
+    questions:["這是消化問題還是其他系統？","需要做哪些檢查？","可以怎麼補充營養？"],
+    watchOuts:["體重快速減輕","解黑便或嘔吐物含血","吞嚥困難","夜間盜汗"]
+  },
+];
+
+/* ====================== DATA: Disease Encyclopedia ====================== */
+const DISEASE_CATEGORIES = [
+  { id: "cardio",      name: "心臟血管",   icon: "heart",   desc: "高血壓、心臟病、中風" },
+  { id: "metabolic",   name: "內分泌代謝", icon: "spark",   desc: "糖尿病、甲狀腺、骨質" },
+  { id: "respiratory", name: "呼吸與感染", icon: "lung",    desc: "氣喘、肺炎、感冒、過敏" },
+  { id: "digestive",   name: "消化系統",   icon: "stomach", desc: "胃食道逆流、肝、腸" },
+  { id: "neuro",       name: "神經與心理", icon: "mind",    desc: "偏頭痛、失智、憂鬱、焦慮" },
+  { id: "musculo",     name: "骨骼肌肉",   icon: "bone",    desc: "關節炎、椎間盤、肩關節" },
+  { id: "gyn",         name: "婦科泌尿",   icon: "female",  desc: "子宮、卵巢、攝護腺" },
+  { id: "skin",        name: "皮膚",       icon: "skin",    desc: "異位性、皰疹、痘痘" },
+  { id: "head",        name: "五官與牙齒", icon: "tooth",   desc: "白內障、牙周病、中耳炎" },
+];
+
+const DISEASES = [
+  /* ===== 心臟血管 ===== */
+  { id:"hypertension", cat:"cardio", emoji:"💗", name:"高血壓",
+    short:"血壓持續高於 130/80 mmHg",
+    summary:"高血壓是最常見的慢性病之一，多數沒有症狀但長期會傷害心、腦、腎、眼。台灣 18 歲以上約 26% 患有高血壓，超過 65 歲過半數有此問題。",
+    causes:["原發性高血壓（90%，與遺傳、年齡、生活型態有關）","續發性：腎臟疾病、內分泌疾病、藥物","高鹽飲食、肥胖","壓力、睡眠不足、睡眠呼吸中止症","酒精過量"],
+    treatment:["生活型態改變是首要：減鹽（每天 <2.4g 鈉）、減重、戒菸限酒","規律有氧運動（每週 150 分鐘）","常用藥物：ACEI/ARB、鈣離子阻斷劑、利尿劑、β 阻斷劑","居家自我血壓監測（早晚各一次，連續 7 天平均）","按時服藥，不可自行停藥（突然停藥可能反彈飆高）"],
+    prevention:["維持理想體重（BMI <24）","低鈉、地中海式飲食（DASH 飲食）","每週 150 分鐘中強度運動","限制酒精（男 ≤2 杯/日、女 ≤1 杯/日）","18 歲後每年量血壓，40 歲後每半年一次"]
+  },
+  { id:"hyperlipidemia", cat:"cardio", emoji:"🩸", name:"高血脂",
+    short:"膽固醇或三酸甘油酯偏高",
+    summary:"高血脂本身沒有症狀，但長期會引起動脈粥樣硬化，是心肌梗塞與中風的主要風險因子。包含總膽固醇、低密度脂蛋白（LDL）、三酸甘油酯升高。",
+    causes:["遺傳性高膽固醇","高油脂、高糖、高反式脂肪飲食","肥胖、缺乏運動","糖尿病、甲狀腺低下","某些藥物（類固醇、利尿劑）"],
+    treatment:["飲食調整：低飽和脂肪、零反式脂肪、增加水溶性纖維","規律運動可提升好膽固醇（HDL）","Statin 類藥物是主要治療，效果與安全性都最好","三酸甘油酯極高（>500）需 fibrate 或魚油","定期追蹤血脂變化（治療中每 3–6 個月）"],
+    prevention:["地中海式飲食（橄欖油、堅果、魚類、蔬果）","減少紅肉、加工食品、含糖飲料","維持理想體重","規律運動","20 歲後每 5 年抽血檢查血脂；高風險族群更頻繁"]
+  },
+  { id:"cad", cat:"cardio", emoji:"💔", name:"冠狀動脈疾病",
+    short:"心臟血管狹窄、可能引發心絞痛",
+    summary:"冠狀動脈疾病是膽固醇斑塊堆積導致供應心肌的血管狹窄，造成心絞痛或心肌梗塞。是國人十大死因前三名。",
+    causes:["動脈粥樣硬化","三高（高血壓、高血糖、高血脂）","抽菸","肥胖、缺乏運動","家族史、年齡、男性","壓力與睡眠不足"],
+    treatment:["阿斯匹靈與抗血小板藥預防血栓","Statin 控制膽固醇","硝化甘油舌下錠緩解心絞痛","狹窄嚴重者做心導管+支架置放","三條血管以上嚴重狹窄可考慮繞道手術"],
+    prevention:["戒菸是最重要的單一行為改變","控制三高","規律運動、地中海飲食","維持理想體重","壓力管理與充足睡眠"]
+  },
+  { id:"mi", cat:"cardio", emoji:"🫀", name:"心肌梗塞",
+    short:"冠狀動脈完全堵塞、心肌壞死",
+    summary:"心肌梗塞是急症，冠狀動脈完全堵塞使心肌缺氧壞死。黃金救援時間是 90 分鐘內打通血管，越快治療存活率越高。",
+    causes:["動脈粥樣硬化斑塊破裂引起血栓","三高未控制","抽菸","壓力、極端情緒或運動","家族史"],
+    treatment:["立即送急診（時間就是心肌）","急性期做心導管打通血管＋支架","住院期間使用抗血小板、Statin、β 阻斷劑、ACEI","心臟復健是恢復期重要環節","終身按時服藥，定期追蹤"],
+    prevention:["控制所有可改變的風險因子（三高、抽菸、體重）","規律運動與健康飲食","學會辨識心臟病前兆（壓迫性胸痛超過 15 分鐘、冒冷汗、輻射至左肩或下巴）","隨身攜帶硝化甘油（高風險者）","出現徵兆立即叫救護車，不要自行就醫"]
+  },
+  { id:"stroke", cat:"cardio", emoji:"🧠", name:"中風",
+    short:"腦血管阻塞或破裂",
+    summary:"中風分為缺血性（80%，血管阻塞）和出血性（20%，血管破裂）。是台灣成人主要的失能與死亡原因。黃金治療時間：缺血性 4.5 小時內可施打血栓溶解劑。",
+    causes:["高血壓（最重要的風險因子）","心房顫動引起的血栓","糖尿病、高血脂","抽菸、酗酒","頸動脈狹窄","少見：腦動脈瘤、血管畸形"],
+    treatment:["立即送急診（時間就是腦細胞）","缺血性中風 4.5 小時內可使用血栓溶解劑","大血管阻塞可在 24 小時內做血栓移除術","出血性中風依出血量考慮手術","急性期後復健是關鍵（黃金 6 個月）"],
+    prevention:["控制高血壓——可降低中風風險約 40%","心房顫動者使用抗凝血藥","控制糖尿病、高血脂","戒菸、限酒","學會 FAST 辨識：F（臉歪）A（手臂無力）S（說話不清）T（時間就是生命）"]
+  },
+  { id:"afib", cat:"cardio", emoji:"💓", name:"心房顫動",
+    short:"最常見的心律不整、中風風險高",
+    summary:"心房顫動是心房不規則快速跳動，可能無症狀也可能心悸、頭暈、胸悶。最大的風險是血栓引發的中風（風險為一般人的 5 倍）。",
+    causes:["年齡（65 歲以上盛行率 5–10%）","高血壓","心臟瓣膜疾病、心衰竭","甲狀腺機能亢進","酒精、咖啡因、壓力","睡眠呼吸中止症"],
+    treatment:["心率控制：β 阻斷劑、鈣離子阻斷劑","心律控制：抗心律不整藥或電燒術","抗凝血藥預防血栓引起的中風（依 CHA2DS2-VASc 評分）","部分患者可考慮電燒手術根治","治療底層原因（甲狀腺、瓣膜疾病）"],
+    prevention:["控制三高、戒菸限酒","減少咖啡因","規律運動、維持理想體重","睡眠呼吸中止症需治療","每年健康檢查含心電圖"]
+  },
+  /* ===== 內分泌代謝 ===== */
+  { id:"diabetes", cat:"metabolic", emoji:"🍬", name:"糖尿病",
+    short:"慢性高血糖、影響全身血管與神經",
+    summary:"糖尿病是慢性高血糖疾病，分為第一型（胰島素缺乏）和第二型（胰島素阻抗，占 90%）。長期會導致心血管、腎臟、視網膜、神經病變。",
+    causes:["第二型：肥胖、缺乏運動、家族史、年齡","第一型：自體免疫破壞胰臟 β 細胞","妊娠糖尿病","其他：胰臟疾病、藥物、內分泌異常"],
+    treatment:["第一型必須使用胰島素","第二型：飲食控制+運動是基礎","口服藥：metformin（首選）、SGLT2 抑制劑、GLP-1 等","必要時加上胰島素","定期監測血糖、糖化血色素（每 3 個月）、眼底、足部、腎功能"],
+    prevention:["維持理想體重——可降低 50% 以上風險","低升糖飲食、減少含糖飲料","每週 150 分鐘有氧運動","避免久坐","45 歲後或有風險因子者每 1–3 年驗血糖"]
+  },
+  { id:"hyperthyroid", cat:"metabolic", emoji:"🦋", name:"甲狀腺機能亢進",
+    short:"代謝過快、心悸、體重減輕",
+    summary:"甲狀腺機能亢進是甲狀腺荷爾蒙過多，造成代謝加速。最常見原因是葛瑞夫茲氏症（自體免疫）。女性比男性多 5–10 倍。",
+    causes:["葛瑞夫茲氏症（自體免疫）","毒性結節性甲狀腺腫","甲狀腺炎","攝取過多碘（偶見）","補充過量甲狀腺素藥物"],
+    treatment:["抗甲狀腺藥物（methimazole、PTU）","放射碘治療（永久性療法）","部分病例需手術切除甲狀腺","β 阻斷劑緩解心悸與顫抖","葛瑞夫茲眼疾需眼科共同照護"],
+    prevention:["此病難以預防，但可以早期發現","出現心悸、消瘦、怕熱、手抖等症狀盡早就醫","家族史者定期甲狀腺功能篩檢","懷孕婦女確認甲狀腺功能","避免極端高碘飲食"]
+  },
+  { id:"hypothyroid", cat:"metabolic", emoji:"🦋", name:"甲狀腺機能低下",
+    short:"代謝變慢、疲倦、體重增加",
+    summary:"甲狀腺機能低下是甲狀腺荷爾蒙不足，造成全身代謝變慢。最常見的成因是橋本氏甲狀腺炎（自體免疫）。",
+    causes:["橋本氏甲狀腺炎（自體免疫，最常見）","甲狀腺手術或放射碘治療後","碘缺乏（台灣少見）","產後甲狀腺炎","藥物（如 lithium、amiodarone）"],
+    treatment:["每天口服 levothyroxine 補充甲狀腺素","劑量需個人化調整","通常需終身服藥","早晨空腹服用，與食物或鈣鐵間隔 1 小時","定期追蹤 TSH（每 6–12 個月）"],
+    prevention:["疾病本身難以完全預防","出現症狀（疲倦、怕冷、體重增加、皮膚乾、便秘）盡早就醫","產後婦女注意產後甲狀腺炎","定期健康檢查含甲狀腺功能","食用適量碘鹽即可，無需特別補碘"]
+  },
+  { id:"gout", cat:"metabolic", emoji:"🦶", name:"痛風",
+    short:"尿酸結晶引起的關節炎",
+    summary:"痛風是尿酸鹽結晶沉積在關節引起的劇烈發炎，常在大腳趾、足踝、膝關節。男性與停經後女性較常見。",
+    causes:["遺傳體質（尿酸代謝異常）","高普林飲食（內臟、海鮮、紅肉）","酒精（特別是啤酒）","果糖飲料","肥胖","利尿劑、降血壓藥（部分）"],
+    treatment:["急性發作：NSAIDs、秋水仙素或類固醇","間歇期使用降尿酸藥（allopurinol、febuxostat）","無症狀高尿酸不一定要治療","急性期不要開始降尿酸藥（會誘發發作）","降尿酸藥需長期服用，目標尿酸 <6 mg/dL"],
+    prevention:["低普林飲食：減少紅肉、內臟、海產","限制酒精，特別是啤酒","避免含糖飲料（高果糖玉米糖漿）","充足水分（每天 2000ml）","維持理想體重，但避免快速減重（會誘發痛風）"]
+  },
+  { id:"osteoporosis", cat:"metabolic", emoji:"🦴", name:"骨質疏鬆",
+    short:"骨密度下降、易骨折",
+    summary:"骨質疏鬆是骨密度與骨品質下降，導致容易骨折。常見髖部、脊椎、手腕骨折。停經後女性與年長者高風險，但常無症狀直到骨折。",
+    causes:["停經後雌激素下降（最大原因）","年齡","鈣與維生素 D 不足","缺乏負重運動","抽菸、飲酒過量","長期使用類固醇","遺傳"],
+    treatment:["雙磷酸鹽類（alendronate、zoledronate）","荷爾蒙補充療法（適合特定族群）","Denosumab、teriparatide（嚴重者）","補充鈣（每天 1000–1200mg）與維生素 D（800–1000 IU）","防跌倒措施"],
+    prevention:["年輕時建立骨本：鈣與維生素 D、運動","規律負重運動（健走、爬樓梯、重訓）","戒菸、限酒","65 歲以上女性、70 歲以上男性做骨密度檢查","居家防跌倒（防滑墊、扶手、適當照明）"]
+  },
+  /* ===== 呼吸與感染 ===== */
+  { id:"asthma", cat:"respiratory", emoji:"🌬️", name:"氣喘",
+    short:"呼吸道慢性發炎、可逆性阻塞",
+    summary:"氣喘是呼吸道慢性發炎導致氣道收縮，造成喘鳴、咳嗽、胸悶、呼吸困難。多在兒童或青少年發病，可控制但無法根治。",
+    causes:["遺傳體質與過敏體質","過敏原（塵蟎、花粉、寵物、黴菌）","空氣污染、二手菸","呼吸道感染","運動、冷空氣","壓力、情緒"],
+    treatment:["控制藥：吸入型類固醇是核心","救援藥：短效支氣管擴張劑（如 albuterol）","嚴重者：長效支氣管擴張劑、抗 IgE 生物製劑","使用尖峰呼氣流量計監測","學會辨識惡化徵兆並及時就醫"],
+    prevention:["避開已知誘發因子","按時使用控制藥（即使無症狀）","流感與肺炎疫苗接種","戒菸、避免二手菸","運動前依醫囑使用預防藥"]
+  },
+  { id:"copd", cat:"respiratory", emoji:"🫁", name:"慢性阻塞性肺病",
+    short:"不可逆的氣道阻塞、長期咳嗽喘",
+    summary:"慢性阻塞性肺病（COPD）包含慢性支氣管炎與肺氣腫，呼吸道阻塞且不可逆。9 成以上與抽菸相關。",
+    causes:["長期抽菸（最主要原因）","二手菸","空氣污染、職業粉塵","α1 抗胰蛋白酶缺乏（少見遺傳）","反覆呼吸道感染"],
+    treatment:["戒菸是唯一能延緩病程的方法","長效支氣管擴張劑為主要藥物","嚴重者使用吸入型類固醇","急性惡化使用口服類固醇與抗生素","氧氣治療、肺部復健"],
+    prevention:["不抽菸、避開二手菸","職業粉塵暴露注意防護","流感、肺炎疫苗接種","早期戒菸效益最大（任何年齡戒菸都有幫助）","出現持續咳嗽、喘要及早檢查"]
+  },
+  { id:"pneumonia", cat:"respiratory", emoji:"🫁", name:"肺炎",
+    short:"肺部感染、發燒咳嗽呼吸喘",
+    summary:"肺炎是肺部感染，可由細菌、病毒、黴菌引起。年長者、慢性病患與免疫低下者較嚴重，是台灣 65 歲以上死亡原因前三。",
+    causes:["細菌（最常見：肺炎鏈球菌、流感嗜血桿菌）","病毒（流感、新冠、RSV）","黴菌（免疫低下者）","吸入性肺炎（嗆到食物或胃酸）","抵抗力下降"],
+    treatment:["細菌性肺炎需要抗生素，療程 7–14 天","病毒性肺炎依病原使用抗病毒藥","充分休息、補充水分","氧氣不足者需住院治療","重症進入加護病房，可能需呼吸器"],
+    prevention:["接種疫苗：肺炎鏈球菌、流感、新冠","戒菸（會降低肺部清潔能力）","勤洗手、避免接觸感冒患者","控制慢性病","年長者吞嚥訓練預防吸入性肺炎"]
+  },
+  { id:"flu", cat:"respiratory", emoji:"🤒", name:"流感",
+    short:"流感病毒引起的急性呼吸道感染",
+    summary:"流感是流感病毒引起的急性感染，與一般感冒不同的是來得急、症狀重（高燒、肌肉痠痛、極度疲倦）。每年秋冬是流行季。",
+    causes:["A 型或 B 型流感病毒","透過飛沫或接觸傳播","潛伏期 1–4 天","可在症狀前 1 天就有傳染力"],
+    treatment:["48 小時內使用抗病毒藥（克流感、瑞樂沙）效果最好","休息、補水、退燒止痛","重症或高風險族群（孕婦、慢性病、長者）需住院","勿自行使用阿斯匹靈（兒童有瑞氏症候群風險）","退燒藥可用普拿疼"],
+    prevention:["每年接種流感疫苗（最有效）","勤洗手、避免觸摸口鼻眼","流行季避免出入人多場所","咳嗽掩口、生病在家休息","公費對象（兒童、長者、慢性病、孕婦）每年定時施打"]
+  },
+  { id:"allergicrhinitis", cat:"respiratory", emoji:"🤧", name:"過敏性鼻炎",
+    short:"鼻黏膜對過敏原過度反應",
+    summary:"過敏性鼻炎是鼻黏膜對過敏原的過度免疫反應，造成鼻塞、流鼻水、打噴嚏、鼻癢。台灣盛行率約 20–30%。",
+    causes:["塵蟎（最常見）","花粉、寵物毛屑、黴菌","蟑螂、灰塵","空氣污染加重症狀","遺傳體質"],
+    treatment:["第二代抗組織胺（loratadine、cetirizine）作為基礎用藥","類固醇鼻噴劑（最有效的單一藥物）","白三烯受體拮抗劑","嚴重者可考慮舌下或皮下減敏治療","生理食鹽水洗鼻清潔黏膜"],
+    prevention:["定期清洗床單、使用防蟎寢具","保持室內乾燥（濕度 <50%）、減少塵蟎","空氣清淨機（HEPA 等級）","花粉季外出戴口罩、戴眼鏡","減少地毯、絨毛玩具"]
+  },
+  { id:"sinusitis", cat:"respiratory", emoji:"👃", name:"鼻竇炎",
+    short:"鼻竇發炎、臉部脹痛",
+    summary:"鼻竇炎是鼻竇黏膜發炎，多在感冒後或過敏發作後出現。急性 <4 週、慢性 >12 週。症狀包括臉部悶痛、濃稠鼻涕、鼻塞、嗅覺下降。",
+    causes:["病毒性感冒（最常見）","細菌感染","過敏性鼻炎","鼻中膈彎曲、鼻瘜肉","牙齒感染（上顎第二大臼齒附近）"],
+    treatment:["病毒性多會自行痊癒（10–14 天內）","細菌性需要抗生素","生理食鹽水洗鼻有助清除分泌物","蒸氣吸入緩解充血","慢性鼻竇炎可能需要功能性內視鏡手術"],
+    prevention:["治療過敏性鼻炎","勤洗手避免感冒","保持空氣濕度","戒菸（會破壞鼻竇黏膜纖毛）","及早治療牙齒感染"]
+  },
+  /* ===== 消化系統 ===== */
+  { id:"gerd", cat:"digestive", emoji:"🔥", name:"胃食道逆流",
+    short:"胃酸倒流引起燒心、胸悶",
+    summary:"胃食道逆流（GERD）是胃酸或內容物倒流到食道，引起火燒心、胸悶、酸味回流。台灣盛行率約 25%。長期未治療可能引起食道病變。",
+    causes:["下食道括約肌鬆弛","胃排空緩慢","肥胖、懷孕","裂孔疝氣","抽菸、酗酒","咖啡、巧克力、辛辣食物"],
+    treatment:["氫離子幫浦抑制劑（PPI）：omeprazole、esomeprazole 等","H2 受體拮抗劑（次選）","制酸劑緩解症狀","嚴重者：胃底摺疊術","生活型態調整是基礎"],
+    prevention:["維持理想體重","少量多餐、避免暴飲暴食","睡前 2–3 小時不進食","抬高床頭 15–20 公分","減少咖啡、酒精、巧克力、辛辣、油炸"]
+  },
+  { id:"pud", cat:"digestive", emoji:"🩹", name:"消化性潰瘍",
+    short:"胃或十二指腸黏膜潰瘍",
+    summary:"消化性潰瘍包含胃潰瘍與十二指腸潰瘍。常見原因是幽門桿菌感染與長期使用 NSAIDs。會引起上腹痛，未治療可能出血或穿孔。",
+    causes:["幽門螺旋桿菌感染（最重要）","長期使用 NSAIDs（如 ibuprofen、阿斯匹靈）","抽菸","酗酒","壓力","少見：胃泌素瘤"],
+    treatment:["PPI 抑制胃酸 4–8 週","幽門桿菌感染需三合一療法（PPI＋兩種抗生素）","停用 NSAIDs 或改用 COX-2 抑制劑","出血性潰瘍需內視鏡止血","治療後追蹤確認痊癒（特別是胃潰瘍）"],
+    prevention:["檢測並根除幽門桿菌","避免長期 NSAIDs，必要使用時加 PPI 保護","戒菸、限酒","壓力管理","規律飲食"]
+  },
+  { id:"ibs", cat:"digestive", emoji:"🌀", name:"大腸激躁症",
+    short:"功能性腸道疾病、腹痛便秘腹瀉",
+    summary:"大腸激躁症（IBS）是常見的功能性腸道疾病，無器質性病變但會反覆腹痛合併排便習慣改變。盛行率約 10–15%。",
+    causes:["腸道蠕動異常","腸道對食物或壓力過度敏感","腸道菌相失衡","壓力、焦慮、憂鬱","食物耐受性問題"],
+    treatment:["低 FODMAP 飲食對許多患者有效","解痙藥緩解腹痛","止瀉或軟便劑依類型使用","抗憂鬱藥（低劑量）對部分患者有效","認知行為治療、催眠治療"],
+    prevention:["飲食日記找出誘發食物","規律作息、適度運動","壓力管理（瑜珈、冥想）","充足纖維與水分","益生菌可能有幫助"]
+  },
+  { id:"fattyliver", cat:"digestive", emoji:"🥩", name:"脂肪肝",
+    short:"肝臟脂肪堆積、可能進展為肝炎",
+    summary:"脂肪肝分酒精性與非酒精性。非酒精性脂肪肝（NAFLD）已成為國人最常見的肝病，與肥胖、糖尿病密切相關，可能進展為脂肪肝炎、肝硬化、肝癌。",
+    causes:["肥胖、代謝症候群","糖尿病、胰島素阻抗","高血脂","酒精","某些藥物","快速減重"],
+    treatment:["減重 7–10% 可顯著改善脂肪肝","控制糖尿病、血脂","規律有氧運動","戒酒","定期追蹤肝功能與肝臟超音波"],
+    prevention:["維持理想體重（BMI <24）","地中海飲食、低糖飲食","規律運動","限制酒精","定期健康檢查含肝功能"]
+  },
+  { id:"hepatitis", cat:"digestive", emoji:"🟡", name:"病毒性肝炎（B/C 型）",
+    short:"慢性肝炎可能進展肝硬化、肝癌",
+    summary:"B 型與 C 型肝炎是台灣肝病三部曲（肝炎→肝硬化→肝癌）的主要原因。B 型多為母嬰垂直感染，C 型多透過血液傳染。許多人為帶原者卻不知。",
+    causes:["B 肝病毒：母嬰垂直、體液、性行為","C 肝病毒：血液（早期輸血、共用針具、刺青）","共用個人物品（牙刷、刮鬍刀）","醫療器材消毒不全"],
+    treatment:["B 肝：抗病毒藥（entecavir、tenofovir）長期治療","C 肝：直接抗病毒藥（DAA）8–12 週療程，治癒率 >95%","定期超音波與胎兒蛋白檢查","急性肝炎多為支持性治療","肝硬化階段需密切追蹤"],
+    prevention:["B 肝疫苗接種（台灣新生兒已全面施打）","不共用個人物品（牙刷、刮鬍刀、針具）","刺青、穿耳洞選擇衛生場所","安全性行為","30–60 歲未受檢者建議做 B 肝、C 肝篩檢"]
+  },
+  { id:"gallstone", cat:"digestive", emoji:"🟫", name:"膽結石",
+    short:"膽囊內結石、可能引起膽絞痛",
+    summary:"膽結石是膽囊內形成的結晶，多數無症狀。發作時上腹或右上腹劇痛、噁心嘔吐，特別在油膩餐後。女性、肥胖、40 歲以上較常見（4F：Fat, Female, Forty, Fertile）。",
+    causes:["膽固醇飽和、膽汁滯留","女性、年齡、懷孕","肥胖、快速減重","高油脂飲食","糖尿病","遺傳"],
+    treatment:["無症狀結石不需處理","有症狀者建議腹腔鏡膽囊切除術","膽囊炎、膽管炎需抗生素＋手術","小型結石可嘗試溶石藥（效果有限）","飲食調整減少發作"],
+    prevention:["維持理想體重，避免快速減重","低脂、高纖飲食","規律進食、不要長時間空腹","規律運動","女性懷孕後期注意飲食"]
+  },
+  /* ===== 神經與心理 ===== */
+  { id:"migrainedx", cat:"neuro", emoji:"🤕", name:"偏頭痛",
+    short:"反覆發作、單側搏動性頭痛",
+    summary:"偏頭痛是常見的原發性頭痛，特徵是單側搏動性疼痛、合併噁心、畏光、畏聲。發作可持續 4–72 小時。女性比男性多 3 倍。",
+    causes:["遺傳體質","荷爾蒙變化（月經、懷孕）","壓力、睡眠不足","特定食物（巧克力、起司、紅酒、味精）","天氣變化","強光、噪音、強烈氣味"],
+    treatment:["急性期：NSAIDs、特異性藥物 triptans（曲坦類）","止吐藥緩解噁心","頻繁發作（每月 ≥4 次）使用預防藥（β 阻斷劑、topiramate、CGRP 抑制劑）","記錄頭痛日記找出誘發因素","急性期在安靜昏暗環境休息"],
+    prevention:["維持規律睡眠與飲食","避開已知誘發食物與情境","壓力管理","規律運動","避免頻繁使用止痛藥（會引起反彈性頭痛）"]
+  },
+  { id:"dementia", cat:"neuro", emoji:"🧠", name:"失智症",
+    short:"認知功能持續退化",
+    summary:"失智症是認知功能（記憶、語言、判斷、執行）持續退化的疾病，影響日常生活。最常見是阿茲海默症（60–70%），其次血管性失智症。早期介入可延緩退化。",
+    causes:["阿茲海默症（最常見）","血管性失智症（中風或小血管病變）","路易氏體失智症","額顳葉失智症","可逆性原因：維生素缺乏、甲狀腺低下、憂鬱、藥物"],
+    treatment:["膽鹼酯酶抑制劑（donepezil 等）可延緩退化","NMDA 受體拮抗劑（memantine）用於中重度","新興抗澱粉樣蛋白藥物（特定族群）","非藥物：認知訓練、社交活動、規律運動","治療共病（憂鬱、行為精神症狀）"],
+    prevention:["控制三高（特別是中年期）","規律有氧與肌力運動","地中海飲食、避免肥胖","保持社交活動與認知活動（閱讀、學習新事物）","充足睡眠、戒菸限酒、預防頭部外傷"]
+  },
+  { id:"depressiondx", cat:"neuro", emoji:"☁️", name:"憂鬱症",
+    short:"持續性情緒低落、影響功能",
+    summary:"憂鬱症是腦神經傳導物質失衡所致的疾病，不是個人意志問題。主要症狀為持續低落、失去興趣、體力下降，需持續超過 2 週並影響功能。可治療且越早介入效果越好。",
+    causes:["神經傳導物質失衡（血清素、正腎上腺素）","遺傳因素","重大壓力或失落事件","慢性疾病、慢性疼痛","產後、季節變化","物質使用、藥物副作用"],
+    treatment:["心理治療（CBT、人際治療）對輕中度有效","抗憂鬱藥（SSRI、SNRI）通常需 4–6 週起效","規律運動的抗憂鬱效果可媲美藥物","重度可考慮 rTMS、ECT","家屬支持與社區資源"],
+    prevention:["維持規律作息與運動","建立支持網絡、不孤立自己","限制酒精","曬太陽、走出戶外","察覺早期徵兆及時尋求協助（衛福部 1925 安心專線）"]
+  },
+  { id:"anxietydx", cat:"neuro", emoji:"💭", name:"焦慮症",
+    short:"過度擔憂、影響日常生活",
+    summary:"焦慮症包含廣泛性焦慮、恐慌症、社交焦慮、特定恐懼症等。當焦慮強度與情境不成比例、伴隨身體症狀（心悸、發抖、胸悶）並影響生活，需要評估治療。",
+    causes:["遺傳體質","腦部神經傳導物質失衡","重大壓力事件","童年創傷","咖啡因、藥物","其他疾病（甲狀腺亢進、心律不整）"],
+    treatment:["認知行為治療（CBT）對焦慮症效果明確","SSRI、SNRI 為主要長期用藥","Benzodiazepines 可短期使用（避免長期成癮）","正念、放鬆訓練、規律運動","恐慌發作時呼吸法（4-7-8）"],
+    prevention:["減少咖啡因與酒精","規律運動是天然抗焦慮藥","學習壓力管理（正念、冥想）","建立社交支持","維持規律睡眠"]
+  },
+  /* ===== 骨骼肌肉 ===== */
+  { id:"oa", cat:"musculo", emoji:"🦴", name:"退化性關節炎",
+    short:"關節軟骨磨損、活動疼痛",
+    summary:"退化性關節炎是關節軟骨磨損與發炎，最常見於膝、髖、手指、脊椎。年齡是最大風險因子，65 歲以上半數以上有不同程度的退化。",
+    causes:["年齡（最主要）","肥胖（特別影響膝關節）","關節過度使用或舊傷","遺傳","女性（停經後）","關節結構異常"],
+    treatment:["減重可顯著減少膝關節負擔","物理治療、肌力訓練（特別是股四頭肌）","NSAIDs、外用止痛凝膠","玻尿酸、PRP 注射","嚴重者人工關節置換"],
+    prevention:["維持理想體重","低衝擊運動（游泳、騎車、瑜珈）","強化關節周圍肌肉","避免長期蹲、跪、爬樓梯","運動穿戴合適護具與鞋具"]
+  },
+  { id:"ra", cat:"musculo", emoji:"✊", name:"類風濕性關節炎",
+    short:"自體免疫攻擊關節",
+    summary:"類風濕性關節炎（RA）是自體免疫疾病，免疫系統攻擊關節滑膜，造成多關節對稱性發炎。晨間僵硬超過 30 分鐘是特徵。可侵犯全身器官。",
+    causes:["自體免疫機制","遺傳因素（HLA-DR4 等基因）","抽菸（重要可控因子）","女性比男性多 3 倍","荷爾蒙影響","環境因素"],
+    treatment:["疾病修飾抗風濕藥（DMARDs）：methotrexate 為首選","生物製劑（TNF 抑制劑、IL-6 抑制劑等）","JAK 抑制劑","NSAIDs、類固醇緩解症狀","早期治療可預防關節破壞"],
+    prevention:["疾病本身難預防","戒菸是最重要的可控因子","及早就醫——黃金治療期是發病後 6 個月內","定期追蹤防止關節變形","維持規律運動與健康飲食"]
+  },
+  { id:"hnp", cat:"musculo", emoji:"🪑", name:"椎間盤突出",
+    short:"椎間盤壓迫神經、放射性疼痛",
+    summary:"椎間盤突出是椎間盤纖維環破裂、髓核擠出壓迫神經根，最常發生於下背（L4-L5、L5-S1）和頸椎。引起放射性疼痛、麻木、無力。",
+    causes:["年齡相關退化","長期姿勢不良","搬重物姿勢錯誤","劇烈運動或外傷","抽菸（影響椎間盤營養）","遺傳"],
+    treatment:["保守治療為主：休息、NSAIDs、肌肉鬆弛劑","物理治療、徒手治療","神經根阻斷術緩解嚴重疼痛","下肢進行性無力或大小便失禁需手術","核心肌群訓練預防復發"],
+    prevention:["正確搬抬姿勢（蹲下用腿力，不彎腰）","避免久坐、定時起身","規律核心肌群訓練","維持理想體重","戒菸"]
+  },
+  { id:"frozenshoulder", cat:"musculo", emoji:"💪", name:"五十肩（沾黏性肩關節囊炎）",
+    short:"肩關節僵硬疼痛、活動受限",
+    summary:"五十肩是肩關節囊發炎與沾黏，造成肩關節活動受限與夜間疼痛。多發生在 40–60 歲，糖尿病患者風險高 5 倍。病程約 1–3 年。",
+    causes:["原發性（無明確原因）","糖尿病","肩部受傷或手術後長期不動","甲狀腺疾病","心臟病、中風後","年齡 40–60 歲、女性較多"],
+    treatment:["物理治療與伸展運動是核心","熱敷、超音波","NSAIDs、口服或關節內類固醇","嚴重者：徒手鬆動、關節擴張術、手術鬆解","耐心——病程約 1–3 年，多數會自行恢復"],
+    prevention:["肩部受傷或手術後盡早活動","控制糖尿病、甲狀腺","規律肩關節伸展運動","避免長時間單側姿勢（如睡覺壓肩）","出現症狀盡早物理治療"]
+  },
+  { id:"carpaltunnel", cat:"musculo", emoji:"✋", name:"腕隧道症候群",
+    short:"正中神經壓迫、手指麻刺",
+    summary:"腕隧道症候群是手腕的正中神經受壓迫，造成拇指、食指、中指麻木刺痛，夜間特別明顯。常見於長期使用滑鼠、抱嬰兒、做家事的人。",
+    causes:["長期重複手腕活動","懷孕、肥胖","糖尿病、甲狀腺低下","類風濕性關節炎","女性比男性多 3 倍","年齡（中年好發）"],
+    treatment:["腕部護具（特別是夜間）","NSAIDs、局部類固醇注射","物理治療","嚴重或保守治療無效者：腕隧道鬆解術","治療底層疾病"],
+    prevention:["工作時保持手腕中立位（不過度上下彎）","使用人體工學鍵盤、滑鼠","定時休息、伸展手腕","控制糖尿病、體重","懷孕期間預防性使用護具"]
+  },
+  /* ===== 婦科泌尿 ===== */
+  { id:"fibroid", cat:"gyn", emoji:"🌷", name:"子宮肌瘤",
+    short:"子宮肌肉的良性腫瘤",
+    summary:"子宮肌瘤是子宮平滑肌的良性腫瘤，育齡婦女約 20–40% 有肌瘤，多數無症狀。可能引起經血過多、經痛、頻尿、不孕。停經後通常會縮小。",
+    causes:["雌激素與黃體素刺激","遺傳因素","年齡（30–50 歲好發）","肥胖","未生育","非裔女性風險較高"],
+    treatment:["無症狀小肌瘤定期追蹤即可","症狀治療：止痛藥、避孕藥、止血藥","GnRH agonist 縮小肌瘤（短期）","海扶刀、子宮動脈栓塞","肌瘤切除或子宮切除（嚴重者）"],
+    prevention:["疾病本身難預防","維持理想體重","規律運動","定期婦科檢查（每年子宮頸抹片＋骨盆檢查）","記錄月經週期與症狀變化"]
+  },
+  { id:"endo", cat:"gyn", emoji:"🌸", name:"子宮內膜異位症",
+    short:"子宮內膜組織長到子宮外",
+    summary:"子宮內膜異位症是子宮內膜組織出現在子宮腔以外（如卵巢、骨盆腔）。引起經痛、慢性骨盆痛、不孕。台灣盛行率 10–15%。",
+    causes:["經血逆流（最廣為接受的理論）","遺傳因素","免疫系統異常","荷爾蒙影響","年輕初經、月經週期短"],
+    treatment:["NSAIDs 緩解經痛","口服避孕藥、黃體素","GnRH agonist","腹腔鏡手術切除病灶","嚴重不孕可考慮人工生殖技術"],
+    prevention:["疾病本身難預防","嚴重經痛盡早就醫，不要忍耐","規律運動可能降低風險","維持理想體重","懷孕與哺乳對部分人有保護效果"]
+  },
+  { id:"pcos", cat:"gyn", emoji:"🌺", name:"多囊性卵巢症候群",
+    short:"荷爾蒙失衡、月經異常、代謝風險",
+    summary:"多囊性卵巢症候群（PCOS）是常見的內分泌疾病，造成月經不規則、雄性素過高（多毛、痘痘）、卵巢多囊樣變化。長期有糖尿病與心血管風險。",
+    causes:["胰島素阻抗（核心機制）","荷爾蒙失衡","遺傳因素","肥胖","環境因素"],
+    treatment:["生活型態調整：減重 5–10% 可改善排卵","口服避孕藥調經","Metformin 改善胰島素阻抗","欲懷孕者使用排卵藥","治療多毛與痘痘"],
+    prevention:["維持理想體重最重要","低升糖飲食","規律運動","定期追蹤糖尿病、血脂","定期婦科檢查"]
+  },
+  { id:"bph", cat:"gyn", emoji:"🚹", name:"攝護腺肥大",
+    short:"年長男性常見、解尿不順",
+    summary:"良性攝護腺肥大（BPH）是隨年齡增加的非癌性增生，壓迫尿道造成解尿不順、頻尿、夜尿。50 歲以上男性過半有不同程度症狀。",
+    causes:["年齡（最主要）","雄性荷爾蒙影響","家族史","肥胖、糖尿病","缺乏運動"],
+    treatment:["α 阻斷劑（tamsulosin 等）放鬆尿道","5α 還原酶抑制劑（finasteride）縮小攝護腺","聯合用藥","微創手術（雷射、TURP）","攝護腺癌篩檢同時進行（PSA）"],
+    prevention:["疾病難以完全預防","維持理想體重","規律運動","減少咖啡因與酒精","50 歲後定期攝護腺檢查（含 PSA）"]
+  },
+  { id:"utidx", cat:"gyn", emoji:"💧", name:"泌尿道感染",
+    short:"細菌感染膀胱或腎臟",
+    summary:"泌尿道感染（UTI）是細菌感染泌尿系統，最常見大腸桿菌。女性比男性常見 8 倍。下泌尿道感染（膀胱炎）較輕，上泌尿道（腎盂腎炎）嚴重。",
+    causes:["大腸桿菌（80% 以上）","女性尿道短易上行感染","解尿習慣不良（憋尿）","性行為","停經後","糖尿病、攝護腺肥大"],
+    treatment:["單純膀胱炎口服抗生素 3–7 天","充足水分加速排出細菌","發燒合併腰側痛（疑似腎盂腎炎）需較長療程","反覆感染者可預防性抗生素或行為調整","孕婦感染需立即治療"],
+    prevention:["每天 1500–2000ml 水分","解尿不憋、性行為後排尿","女性如廁從前往後擦","避免使用刺激性私處清潔產品","蔓越莓萃取對部分人有效"]
+  },
+  { id:"kidneystone", cat:"gyn", emoji:"🪨", name:"腎結石",
+    short:"腎臟或輸尿管結石、劇烈腰痛",
+    summary:"腎結石是尿液中礦物質結晶形成的固體。發作時引起劇烈腰側痛、血尿、噁心嘔吐。男性比女性多 2–3 倍，台灣盛行率約 9%。",
+    causes:["水分攝取不足","高鈉、高動物蛋白飲食","高草酸食物（菠菜、堅果、巧克力）","肥胖、糖尿病","副甲狀腺亢進","家族史"],
+    treatment:["小於 5mm 結石多會自行排出","止痛、補水","體外震波碎石","輸尿管鏡或經皮腎鏡取石","嚴重感染合併結石需立即引流"],
+    prevention:["每天 2500ml 以上水分（排出 2000ml 尿）","低鈉飲食","適量鈣（不要刻意減少）","減少動物蛋白","控制體重、糖尿病"]
+  },
+  /* ===== 皮膚 ===== */
+  { id:"atopic", cat:"skin", emoji:"🌿", name:"異位性皮膚炎",
+    short:"慢性反覆的皮膚發炎搔癢",
+    summary:"異位性皮膚炎是慢性反覆發作的皮膚發炎，與過敏體質相關。常合併過敏性鼻炎、氣喘。兒童期最常見，部分成人也會持續。",
+    causes:["遺傳體質與過敏體質","皮膚屏障功能不全","免疫系統異常反應","環境誘發（乾燥、塵蟎、食物）","壓力"],
+    treatment:["保濕是基礎中的基礎（每天 2 次以上）","急性期外用類固醇","非類固醇免疫調節劑（tacrolimus）","新藥：dupilumab（生物製劑）、JAK 抑制劑","抗組織胺幫助止癢"],
+    prevention:["每天加強保濕（厚重型乳液）","避開誘發物（塵蟎、化學清潔劑、羊毛）","洗澡水溫不過熱（37–40°C）、時間不過長","穿著棉質透氣衣物","壓力管理"]
+  },
+  { id:"shinglesdx", cat:"skin", emoji:"⚡", name:"帶狀皰疹（皮蛇）",
+    short:"水痘病毒再活化、單側神經分布",
+    summary:"帶狀皰疹是潛伏的水痘病毒再活化，沿單側神經分布出現水泡疹群，伴隨刺痛或灼痛。50 歲以上、免疫低下者高風險。後遺神經痛是主要併發症。",
+    causes:["水痘帶狀皰疹病毒（VZV）再活化","年齡 ≥50 歲","免疫低下（壓力、疾病、藥物）","近期重大疾病或手術"],
+    treatment:["72 小時內使用抗病毒藥（acyclovir、famciclovir）效果最好","止痛藥（NSAIDs、神經痛藥物 gabapentin）","保持患部清潔乾燥","眼部帶狀皰疹需立即眼科會診","後遺神經痛需長期治療"],
+    prevention:["50 歲以上接種帶狀皰疹疫苗（Shingrix 預防效果優異）","年輕時接種水痘疫苗","維持良好免疫力（睡眠、運動、飲食）","壓力管理","發疹期避免接觸沒得過水痘的孕婦與嬰兒"]
+  },
+  { id:"acnedx", cat:"skin", emoji:"✨", name:"痘痘（青春痘）",
+    short:"毛囊皮脂腺慢性發炎",
+    summary:"痘痘是毛囊皮脂腺的慢性發炎，與荷爾蒙、皮脂、痤瘡桿菌、發炎有關。青春期最盛行，但成人也可能持續。可治療但需耐心。",
+    causes:["青春期或荷爾蒙變化","油性肌膚、皮脂分泌過多","痤瘡桿菌增生","遺傳","壓力","某些藥物（類固醇、鋰鹽）"],
+    treatment:["輕度：外用 A 酸或過氧化苯甲醯","中度：合併外用或口服抗生素","重度：口服 A 酸（需嚴格避孕、定期抽血追蹤）","女性可考慮含抗雄激素避孕藥","痘疤可由皮膚科做雷射、磨皮、酸類治療"],
+    prevention:["溫和清潔，每天兩次（過度清潔反而惡化）","選用「不致粉刺」的保養與彩妝品","防曬避免痘疤色素沉澱","規律作息、減少壓力","減少高糖、高脂、奶製品（部分研究顯示相關）"]
+  },
+  /* ===== 五官與牙齒 ===== */
+  { id:"cataract", cat:"head", emoji:"👁️", name:"白內障",
+    short:"水晶體混濁、視力模糊",
+    summary:"白內障是水晶體蛋白變性混濁，造成視力模糊、畏光、色彩變淡。年齡是最主要原因，65 歲以上半數以上有白內障。",
+    causes:["年齡（最主要）","紫外線長期暴露","糖尿病","長期使用類固醇","眼部外傷或手術","抽菸"],
+    treatment:["早期可調整眼鏡度數","視力影響生活時做手術（人工水晶體置換）","手術為門診手術，恢復快","可選擇單焦或多焦點水晶體","糖尿病者需先控制血糖再手術"],
+    prevention:["戶外戴防紫外線太陽眼鏡","控制糖尿病","戒菸","避免長期使用類固醇","均衡飲食含葉黃素、維生素 C 與 E"]
+  },
+  { id:"glaucoma", cat:"head", emoji:"🔵", name:"青光眼",
+    short:"視神經受損、視野缺損",
+    summary:"青光眼是視神經受損，多與眼壓高有關，會造成不可逆的視野缺損與失明。早期幾乎無症狀，被稱為「視力的小偷」。台灣 40 歲以上盛行率約 3.5%。",
+    causes:["眼壓過高（最主要）","年齡 40 歲以上","家族史","近視 600 度以上、遠視高度","糖尿病、高血壓","長期使用類固醇"],
+    treatment:["藥水降眼壓（前列腺素類為主）","雷射治療","手術（小樑網切除術、引流管植入）","急性青光眼是急症，需立即降壓","治療目標：保留現有視野、預防進一步惡化"],
+    prevention:["40 歲後每 1–2 年眼科檢查（含眼壓、視神經）","高風險族群（家族史、高度近視、糖尿病）更頻繁","控制血壓、血糖","避免長期使用類固醇眼藥水","按時點藥水（已治療者）"]
+  },
+  { id:"perio", cat:"head", emoji:"🦷", name:"牙周病",
+    short:"牙齦與齒槽骨慢性發炎",
+    summary:"牙周病是牙菌斑引起的慢性發炎，破壞牙齦與齒槽骨，導致牙齒鬆動脫落。是成人失牙的主要原因。台灣 35 歲以上 8 成以上有不同程度的牙周問題。",
+    causes:["牙菌斑與牙結石堆積","刷牙與牙線習慣不良","抽菸（重要可控因子）","糖尿病（雙向影響）","遺傳","壓力、荷爾蒙變化"],
+    treatment:["輕度：洗牙＋衛教","中重度：深層刮除、牙根整平","嚴重者：牙周手術","牙齒鬆動可能需要拔除、植牙","治療後需嚴格的後續維護"],
+    prevention:["每天刷牙 2 次（貝氏刷牙法、軟毛牙刷）","每天使用牙線或牙間刷","每 6 個月洗牙一次","戒菸","控制糖尿病"]
+  },
+  { id:"otitis", cat:"head", emoji:"👂", name:"中耳炎",
+    short:"中耳腔感染、耳痛、聽力下降",
+    summary:"中耳炎是中耳腔感染或積液，常見於兒童（耳咽管短）。急性中耳炎多在感冒後出現耳痛、發燒、聽力下降。",
+    causes:["感冒病毒延伸感染","細菌感染（肺炎鏈球菌、流感嗜血桿菌）","耳咽管功能不良","過敏","二手菸暴露","奶瓶平躺餵奶（嬰兒）"],
+    treatment:["輕度可先觀察 48–72 小時（特別是 2 歲以上）","明顯感染需口服抗生素（amoxicillin 為主）","止痛藥緩解耳痛","反覆中耳炎可能需要中耳通氣管","保持耳道乾燥"],
+    prevention:["接種肺炎鏈球菌與流感疫苗","哺乳對嬰兒有保護效果","避免二手菸","嬰兒餵奶不要平躺","治療過敏與鼻竇炎"]
+  },
+];
+
+/* Generic quiz template for symptoms without custom quizzes */
+function genericQuiz(s) {
+  return [
+    { q: `${s.name}持續多久了？`,
+      options: [
+        { label: "今天才開始", flag: "neutral" },
+        { label: "1–3 天", flag: "neutral" },
+        { label: "持續超過 1 週", flag: "amber" },
+        { label: "反覆出現好幾週", flag: "amber" },
+      ]},
+    { q: "嚴重程度大概是？",
+      options: [
+        { label: "輕微，幾乎沒影響生活", flag: "neutral" },
+        { label: "中等，需要休息一下", flag: "neutral" },
+        { label: "嚴重，明顯影響工作或睡眠", flag: "amber" },
+      ]},
+    { q: `有沒有合併以下任一警訊？`, multi: true,
+      hint: `若${s.name}合併下列狀況請立即就醫`,
+      options: (s.watchOuts || []).slice(0, 4).map(w => ({ label: w, flag: "red" })).concat([{ label: "以上都沒有", flag: "neutral" }])
+    },
+    { q: "之前有沒有試過自我處理？有改善嗎？",
+      options: [
+        { label: "有改善，只想了解一下", flag: "neutral" },
+        { label: "稍微改善但反覆", flag: "neutral" },
+        { label: "完全沒改善或越來越糟", flag: "amber" },
+        { label: "還沒試過", flag: "neutral" },
+      ]},
+  ];
+}
+
+/* ====================== ROUTER & STATE ====================== */
+const app = document.getElementById("app");
+let state = {
+  route: { name: "splash" },
+  quiz: { symId: null, answers: [], step: 0 },
+};
+
+function go(route, replace) {
+  state.route = route;
+  if (replace) history.replaceState(route, "", "");
+  else history.pushState(route, "", "");
+  render();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+window.addEventListener("popstate", (e) => {
+  if (e.state) { state.route = e.state; render(); }
+  else { state.route = { name: "home" }; render(); }
+});
+
+/* ====================== RENDER ====================== */
+function render() {
+  app.innerHTML = "";
+  const r = state.route;
+  switch (r.name) {
+    case "splash":      renderSplash(); break;
+    case "onboarding":  renderOnboarding(r.step || 0); break;
+    case "home":        renderHome(); break;
+    case "redflag":     renderRedFlag(); break;
+    case "demographic": renderDemographic(); break;
+    case "picker":      renderPicker(); break;
+    case "quiz":        renderQuiz(r.symId, r.step || 0); break;
+    case "result":      renderResult(r.id); break;
+    case "history":     renderHistory(); break;
+    case "profile":     renderProfile(); break;
+    case "browse":      renderBrowse(); break;
+    case "category":    renderCategory(r.id); break;
+    case "detail":      renderDetail(r.id); break;
+    case "about":       renderAbout(); break;
+    default:            renderHome(); break;
+  }
+  // bottom nav for main pages
+  if (["home","browse","history","profile"].includes(r.name)) {
+    app.appendChild(renderBottomNav());
+  }
+}
+
+/* ===== Top bars ===== */
+function topbarHome() {
+  const el = document.createElement("div");
+  el.className = "topbar";
+  el.innerHTML = `
+    <div class="brand">
+      <div class="brand-mark">${ICONS.leaf}</div>
+      <div class="brand-name">Vitala</div>
+    </div>
+    <div style="flex:1"></div>
+  `;
+  return el;
+}
+function topbarBack(title, opts={}) {
+  const el = document.createElement("div");
+  el.className = "topbar";
+  el.innerHTML = `
+    <button class="back" aria-label="返回">${ICONS.back}</button>
+    <div class="title">${title}</div>
+    ${opts.right ? `<button class="right">${opts.right}</button>` : ""}
+  `;
+  el.querySelector(".back").addEventListener("click", () => {
+    if (opts.onBack) opts.onBack();
+    else history.back();
+  });
+  if (opts.right && opts.onRight) {
+    el.querySelector(".right").addEventListener("click", opts.onRight);
+  }
+  return el;
+}
+
+/* ===== Splash ===== */
+function renderSplash() {
+  const el = document.createElement("div");
+  el.className = "splash";
+  el.innerHTML = `
+    <div class="splash-inner">
+      <div class="splash-logo">${ICONS.leaf}</div>
+      <div class="splash-name">Vitala</div>
+      <div class="splash-tag">Understand. Decide. Feel better.</div>
+    </div>
+  `;
+  app.appendChild(el);
+  setTimeout(() => {
+    const onboarded = STORE.get("onboarded", false);
+    if (onboarded) go({ name: "home" }, true);
+    else go({ name: "onboarding", step: 0 }, true);
+  }, 1900);
+}
+
+/* ===== Onboarding ===== */
+const ONB = [
+  { icon: "onb1", title: "看懂身體不需要醫學學位", body: "Vitala 用問答式引導，幫你判斷症狀的急迫程度，從「我該不該擔心」直接到「我該怎麼辦」。" },
+  { icon: "onb2", title: "幾個問題就能定位方向", body: "我們不會給診斷，但會告訴你：這算急嗎？該掛哪一科？什麼時候該再回診？" },
+  { icon: "onb3", title: "進診間不再腦袋空白", body: "每次檢查結束會幫你準備 3 個關鍵問題，可以直接帶到醫生面前。\n\n本內容僅供衛教參考，緊急狀況請撥 119。" },
+];
+function renderOnboarding(step) {
+  const el = document.createElement("div");
+  el.className = "page onb";
+  const o = ONB[step];
+  el.innerHTML = `
+    <button class="onb-skip" id="skip">略過</button>
+    <div class="onb-stage">
+      <div class="onb-icon">${ICONS[o.icon]}</div>
+      <h2>${o.title}</h2>
+      <p style="white-space:pre-line">${o.body}</p>
+    </div>
+    <div class="onb-dots">
+      ${ONB.map((_,i) => `<span class="${i===step?'active':''}"></span>`).join("")}
+    </div>
+    <button class="btn-primary lg" id="next">${step === ONB.length - 1 ? "開始使用 Vitala" : "下一步"}</button>
+  `;
+  el.querySelector("#skip").addEventListener("click", () => finishOnboarding());
+  el.querySelector("#next").addEventListener("click", () => {
+    if (step === ONB.length - 1) finishOnboarding();
+    else go({ name: "onboarding", step: step + 1 }, true);
+  });
+  app.appendChild(el);
+}
+function finishOnboarding() {
+  STORE.set("onboarded", true);
+  go({ name: "home" }, true);
+}
+
+/* ===== Home ===== */
+function renderHome() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarHome());
+
+  const hero = document.createElement("div");
+  hero.className = "home-hero";
+  hero.innerHTML = `
+    <h1>看懂身體，做出決定。<small>Understand. Decide. Feel better.</small></h1>
+    <p>身體不舒服又不知道該不該去醫院？讓 Vitala 幾個問題後告訴你急不急、看哪一科。</p>
+  `;
+  wrap.appendChild(hero);
+
+  const ctas = document.createElement("div");
+  ctas.className = "home-cta-wrap";
+  ctas.innerHTML = `
+    <button class="btn-primary lg" id="startCheck">🩺 開始症狀檢查</button>
+    <button class="btn-secondary" id="browseAll">📖 瀏覽疾病百科</button>
+  `;
+  ctas.querySelector("#startCheck").addEventListener("click", () => go({ name: "redflag" }));
+  ctas.querySelector("#browseAll").addEventListener("click", () => go({ name: "browse" }));
+  wrap.appendChild(ctas);
+
+  // recent history
+  const history = STORE.get("history", []);
+  if (history.length) {
+    const block = document.createElement("section");
+    block.className = "block";
+    block.innerHTML = `
+      <div class="block-head"><h2>最近檢查</h2><a id="seeAll">查看全部</a></div>
+      <div id="histList"></div>
+    `;
+    const list = block.querySelector("#histList");
+    history.slice(0, 3).forEach(h => list.appendChild(historyItem(h)));
+    block.querySelector("#seeAll").addEventListener("click", () => go({ name: "history" }));
+    wrap.appendChild(block);
+  }
+
+  // popular
+  const pop = document.createElement("section");
+  pop.className = "block";
+  const popularIds = ["headache","fever","chestpain","abdominal","cough","backpain"];
+  pop.innerHTML = `
+    <div class="block-head"><h2>常見症狀（直接檢查）</h2></div>
+    <div class="sym-list" id="popList"></div>
+  `;
+  const list = pop.querySelector("#popList");
+  popularIds.forEach(id => {
+    const s = SYMPTOMS.find(x => x.id === id);
+    if (s) list.appendChild(symptomQuickItem(s));
+  });
+  wrap.appendChild(pop);
+
+  app.appendChild(wrap);
+}
+
+function historyItem(h) {
+  const btn = document.createElement("button");
+  btn.className = "history-card";
+  btn.style.width = "100%"; btn.style.textAlign = "left";
+  btn.innerHTML = `
+    <div class="hist-light ${h.light}"></div>
+    <div class="hist-text">
+      <div class="hist-name">${h.name}</div>
+      <div class="hist-meta">${formatDate(h.t)} · ${h.lightLabel}</div>
+    </div>
+    <div class="sym-arrow">${ICONS.arrow}</div>
+  `;
+  btn.addEventListener("click", () => go({ name: "result", id: h.id }));
+  return btn;
+}
+
+function symptomQuickItem(s) {
+  const btn = document.createElement("button");
+  btn.className = "sym-item";
+  btn.innerHTML = `
+    <div class="sym-emoji">${s.emoji}</div>
+    <div class="sym-text">
+      <div class="sym-name">${s.name}</div>
+      <div class="sym-desc">${s.short}</div>
+    </div>
+    <div class="sym-arrow">${ICONS.arrow}</div>
+  `;
+  btn.addEventListener("click", () => startQuizFor(s.id));
+  return btn;
+}
+
+/* ===== Red-flag screen ===== */
+function renderRedFlag() {
+  const wrap = document.createElement("div");
+  wrap.className = "page";
+  wrap.appendChild(topbarBack("緊急狀況檢查"));
+
+  const c = document.createElement("div");
+  c.className = "rf-wrap";
+  c.innerHTML = `
+    <div class="rf-head">
+      <div class="ico">${ICONS.alert}</div>
+      <div>
+        <h3>先確認一下緊急狀況</h3>
+        <p>在開始之前，請確認你或患者目前是否有以下任一情況。如果有，請立即撥打 119 或前往急診。</p>
+      </div>
+    </div>
+    <div class="rf-list">
+      <div class="rf-item"><div class="num">1</div><div class="txt">劇烈胸痛超過 15 分鐘、合併冒冷汗或呼吸困難</div></div>
+      <div class="rf-item"><div class="num">2</div><div class="txt">突然單側肢體無力、口齒不清、臉部歪斜</div></div>
+      <div class="rf-item"><div class="num">3</div><div class="txt">嚴重呼吸困難、嘴唇或指尖發紫</div></div>
+      <div class="rf-item"><div class="num">4</div><div class="txt">大量出血、嘔血或解出大量血便</div></div>
+      <div class="rf-item"><div class="num">5</div><div class="txt">意識不清、嗜睡叫不醒、抽搐</div></div>
+      <div class="rf-item"><div class="num">6</div><div class="txt">突發「這輩子最痛」的劇烈頭痛</div></div>
+      <div class="rf-item"><div class="num">7</div><div class="txt">嚴重過敏：眼皮嘴唇腫脹、呼吸困難、全身出疹</div></div>
+    </div>
+    <div class="rf-actions">
+      <button class="btn-danger" id="hasRf">⚠️ 我有以上任一狀況，請撥 119</button>
+      <button class="btn-primary" id="noRf">沒有，繼續症狀檢查</button>
+    </div>
+  `;
+  c.querySelector("#hasRf").addEventListener("click", () => {
+    alert("緊急狀況請立即撥打 119 或前往最近的急診。\n\n本 app 無法處理緊急醫療事件。");
+  });
+  c.querySelector("#noRf").addEventListener("click", () => {
+    const profile = STORE.get("profile", null);
+    if (!profile) go({ name: "demographic" });
+    else go({ name: "picker" });
+  });
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+}
+
+/* ===== Demographic (first time) ===== */
+function renderDemographic() {
+  const wrap = document.createElement("div");
+  wrap.className = "page";
+  wrap.appendChild(topbarBack("基本資料"));
+
+  const draft = { age: null, sex: null, pregnant: null, chronic: [] };
+
+  const c = document.createElement("div");
+  c.style.padding = "20px 22px 24px";
+  c.innerHTML = `
+    <div style="font-size:14px;color:var(--ink-700);margin-bottom:18px;line-height:1.65">
+      只問一次，之後會自動帶入。資料只儲存在你的裝置上，不會上傳。
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-label">年齡層</div>
+      <div class="chip-row" id="ageRow">
+        ${["嬰兒（<3 個月）","幼兒（3 個月–3 歲）","兒童（3–12 歲）","青少年（13–17）","成人（18–64）","65 歲以上"].map(v=>`<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-label">生理性別</div>
+      <div class="chip-row" id="sexRow">
+        ${["女","男","不想說"].map(v=>`<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}
+      </div>
+    </div>
+
+    <div class="demo-section" id="pregBlock" style="display:none">
+      <div class="demo-label">是否懷孕</div>
+      <div class="chip-row" id="pregRow">
+        ${["是","否","不確定"].map(v=>`<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <div class="demo-label">慢性病史（可複選）</div>
+      <div class="chip-row" id="chronicRow">
+        ${["高血壓","糖尿病","心血管疾病","免疫疾病","洗腎","沒有"].map(v=>`<button class="chip-btn" data-v="${v}">${v}</button>`).join("")}
+      </div>
+    </div>
+
+    <button class="btn-primary lg" id="saveDemo" style="margin-top:8px">完成，開始檢查</button>
+    <button class="btn-ghost" id="skipDemo">先略過</button>
+  `;
+
+  // single-select rows
+  c.querySelectorAll("#ageRow .chip-btn, #sexRow .chip-btn, #pregRow .chip-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      b.parentElement.querySelectorAll(".chip-btn").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+      const row = b.parentElement.id;
+      const v = b.dataset.v;
+      if (row === "ageRow") draft.age = v;
+      if (row === "sexRow") {
+        draft.sex = v;
+        c.querySelector("#pregBlock").style.display = (v === "女") ? "" : "none";
+        if (v !== "女") draft.pregnant = null;
+      }
+      if (row === "pregRow") draft.pregnant = v;
+    });
+  });
+
+  // multi-select chronic
+  c.querySelectorAll("#chronicRow .chip-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      const v = b.dataset.v;
+      if (v === "沒有") {
+        c.querySelectorAll("#chronicRow .chip-btn").forEach(x => x.classList.remove("selected"));
+        b.classList.add("selected");
+        draft.chronic = ["沒有"];
+      } else {
+        const noneBtn = [...c.querySelectorAll("#chronicRow .chip-btn")].find(x=>x.dataset.v==="沒有");
+        if (noneBtn) noneBtn.classList.remove("selected");
+        draft.chronic = draft.chronic.filter(x => x !== "沒有");
+        if (b.classList.contains("selected")) {
+          b.classList.remove("selected");
+          draft.chronic = draft.chronic.filter(x => x !== v);
+        } else {
+          b.classList.add("selected");
+          draft.chronic.push(v);
+        }
+      }
+    });
+  });
+
+  c.querySelector("#saveDemo").addEventListener("click", () => {
+    STORE.set("profile", draft);
+    go({ name: "picker" }, true);
+  });
+  c.querySelector("#skipDemo").addEventListener("click", () => {
+    STORE.set("profile", { skipped: true });
+    go({ name: "picker" }, true);
+  });
+
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+}
+
+/* ===== Symptom picker ===== */
+function renderPicker() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack("選擇症狀"));
+
+  const sw = document.createElement("div");
+  sw.style.padding = "16px 20px 8px";
+  sw.innerHTML = `
+    <div style="margin-bottom:14px;font-size:14.5px;color:var(--ink-700);line-height:1.6">
+      你目前最不舒服的是什麼？選一個最主要的症狀開始。
+    </div>
+    <div style="position:relative;background:#fff;border:1.5px solid var(--line);border-radius:14px">
+      <div style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--ink-300)">${ICONS.search}</div>
+      <input type="text" id="qq" placeholder="搜尋症狀（如：頭痛、發燒）" style="width:100%;border:0;background:transparent;outline:none;padding:13px 16px 13px 46px;font-size:15px;border-radius:14px">
+    </div>
+    <div id="qResults"></div>
+  `;
+  wrap.appendChild(sw);
+
+  // categories
+  const block = document.createElement("section");
+  block.className = "block";
+  block.innerHTML = `<div class="block-head"><h2>依部位選擇</h2></div><div class="cat-grid"></div>`;
+  const grid = block.querySelector(".cat-grid");
+  CATEGORIES.forEach(c => {
+    const count = SYMPTOMS.filter(s => s.cat === c.id).length;
+    const btn = document.createElement("button");
+    btn.className = "cat-card";
+    btn.innerHTML = `
+      <div class="cat-icon">${ICONS[c.icon] || ICONS.spark}</div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-count">${count} 個症狀</div>
+    `;
+    btn.addEventListener("click", () => go({ name: "category", id: c.id, mode: "quiz" }));
+    grid.appendChild(btn);
+  });
+  wrap.appendChild(block);
+
+  // search behavior
+  const qq = wrap.querySelector("#qq");
+  const qRes = wrap.querySelector("#qResults");
+  qq.addEventListener("input", () => {
+    const q = qq.value.trim();
+    if (!q) { qRes.innerHTML = ""; return; }
+    const matches = SYMPTOMS.filter(s => s.name.includes(q) || s.short.includes(q));
+    if (!matches.length) {
+      qRes.innerHTML = `<div class="empty"><div class="big">🔍</div>找不到「${escapeHtml(q)}」</div>`;
+      return;
+    }
+    qRes.innerHTML = `<div class="block-head" style="padding-top:12px;margin-bottom:6px"><h2>搜尋結果</h2></div>`;
+    const list = document.createElement("div");
+    list.className = "sym-list";
+    matches.forEach(s => list.appendChild(symptomQuickItem(s)));
+    qRes.appendChild(list);
+  });
+
+  app.appendChild(wrap);
+}
+
+/* ===== Category page (router-aware: quiz mode vs browse mode) ===== */
+function renderCategory(catId) {
+  const isQuiz = state.route.mode === "quiz";
+  const cat = isQuiz
+    ? CATEGORIES.find(c => c.id === catId)
+    : DISEASE_CATEGORIES.find(c => c.id === catId);
+  if (!cat) { go({ name: "home" }); return; }
+
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack(cat.name));
+
+  const head = document.createElement("div");
+  head.style.padding = "20px 20px 8px";
+  head.innerHTML = `
+    <div style="font-size:13px;color:var(--ink-500);margin-bottom:4px">${isQuiz ? "選擇要檢查的症狀" : "疾病分類"}</div>
+    <div style="font-size:22px;font-weight:700;color:var(--mint-700);letter-spacing:-0.4px">${cat.name}</div>
+    <div style="font-size:13.5px;color:var(--ink-500);margin-top:4px">${cat.desc}</div>
+  `;
+  wrap.appendChild(head);
+
+  const sec = document.createElement("section");
+  sec.className = "block";
+  const list = document.createElement("div");
+  list.className = "sym-list";
+  if (isQuiz) {
+    SYMPTOMS.filter(s => s.cat === catId).forEach(s => list.appendChild(symptomQuickItem(s)));
+  } else {
+    DISEASES.filter(d => d.cat === catId).forEach(d => list.appendChild(diseaseBrowseItem(d)));
+  }
+  sec.appendChild(list);
+  wrap.appendChild(sec);
+  app.appendChild(wrap);
+}
+
+function diseaseBrowseItem(d) {
+  const btn = document.createElement("button");
+  btn.className = "sym-item";
+  btn.innerHTML = `
+    <div class="sym-emoji">${d.emoji}</div>
+    <div class="sym-text">
+      <div class="sym-name">${d.name}</div>
+      <div class="sym-desc">${d.short}</div>
+    </div>
+    <div class="sym-arrow">${ICONS.arrow}</div>
+  `;
+  btn.addEventListener("click", () => go({ name: "detail", id: d.id }));
+  return btn;
+}
+
+/* ===== Quiz ===== */
+function startQuizFor(symId) {
+  const profile = STORE.get("profile", null);
+  if (!profile) {
+    state.quiz = { symId, answers: [], step: 0 };
+    go({ name: "demographic" });
+    return;
+  }
+  state.quiz = { symId, answers: [], step: 0 };
+  go({ name: "quiz", symId, step: 0 });
+}
+
+function getQuiz(symId) {
+  const s = SYMPTOMS.find(x => x.id === symId);
+  if (!s) return [];
+  return QUIZZES[symId] || genericQuiz(s);
+}
+
+function renderQuiz(symId, step) {
+  const s = SYMPTOMS.find(x => x.id === symId);
+  if (!s) { go({ name: "home" }); return; }
+  const quiz = getQuiz(symId);
+  if (state.quiz.symId !== symId) state.quiz = { symId, answers: [], step: 0 };
+  if (step >= quiz.length) {
+    finalizeQuiz(symId);
+    return;
+  }
+  const q = quiz[step];
+
+  const wrap = document.createElement("div");
+  wrap.className = "page";
+  wrap.appendChild(topbarBack(s.name, {
+    onBack: () => {
+      if (step === 0) history.back();
+      else go({ name: "quiz", symId, step: step - 1 }, true);
+    }
+  }));
+
+  const prog = document.createElement("div");
+  prog.className = "quiz-progress";
+  prog.innerHTML = `<span style="width:${((step + 1) / quiz.length) * 100}%"></span>`;
+  wrap.appendChild(prog);
+
+  const c = document.createElement("div");
+  c.className = "quiz-wrap";
+  c.innerHTML = `
+    <div class="quiz-step">問題 ${step + 1} / ${quiz.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    ${q.hint ? `<div class="quiz-hint">${q.hint}</div>` : ""}
+    <div class="opt-list" id="opts"></div>
+    <div class="quiz-actions">
+      ${step > 0 ? `<button class="btn-secondary" id="back">上一題</button>` : ""}
+      <button class="btn-primary" id="next" disabled style="opacity:0.5">下一題</button>
+    </div>
+  `;
+  const optsEl = c.querySelector("#opts");
+  const isMulti = !!q.multi;
+  let selectedIdx = isMulti ? new Set() : null;
+
+  q.options.forEach((opt, i) => {
+    const ob = document.createElement("button");
+    ob.className = "opt" + (isMulti ? " multi" : "");
+    ob.innerHTML = `<div class="check">${ICONS.check}</div><span>${opt.label}</span>`;
+    ob.addEventListener("click", () => {
+      if (isMulti) {
+        // "以上都沒有" exclusive
+        const isNoneOpt = /^以上都沒有$|^都沒有/.test(opt.label) || /都沒有特別感覺/.test(opt.label);
+        if (isNoneOpt) {
+          selectedIdx.clear();
+          selectedIdx.add(i);
+          optsEl.querySelectorAll(".opt").forEach((x,j) => x.classList.toggle("selected", j === i));
+        } else {
+          // remove "none" if any none-option selected
+          q.options.forEach((o2, j) => {
+            if (selectedIdx.has(j) && (/^以上都沒有$|^都沒有/.test(o2.label) || /都沒有特別感覺/.test(o2.label))) {
+              selectedIdx.delete(j);
+              optsEl.querySelectorAll(".opt")[j].classList.remove("selected");
+            }
+          });
+          if (selectedIdx.has(i)) { selectedIdx.delete(i); ob.classList.remove("selected"); }
+          else { selectedIdx.add(i); ob.classList.add("selected"); }
+        }
+        const nextBtn = c.querySelector("#next");
+        const has = selectedIdx.size > 0;
+        nextBtn.disabled = !has;
+        nextBtn.style.opacity = has ? 1 : 0.5;
+      } else {
+        selectedIdx = i;
+        optsEl.querySelectorAll(".opt").forEach((x,j) => x.classList.toggle("selected", j === i));
+        const nextBtn = c.querySelector("#next");
+        nextBtn.disabled = false;
+        nextBtn.style.opacity = 1;
+      }
+    });
+    optsEl.appendChild(ob);
+  });
+
+  c.querySelector("#next").addEventListener("click", () => {
+    let answer;
+    if (isMulti) {
+      const arr = [...selectedIdx];
+      answer = arr.map(idx => q.options[idx]);
+    } else {
+      answer = [q.options[selectedIdx]];
+    }
+    state.quiz.answers[step] = answer;
+    if (step + 1 >= quiz.length) finalizeQuiz(symId);
+    else go({ name: "quiz", symId, step: step + 1 }, true);
+  });
+  if (c.querySelector("#back")) {
+    c.querySelector("#back").addEventListener("click", () => go({ name: "quiz", symId, step: step - 1 }, true));
+  }
+
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+}
+
+function finalizeQuiz(symId) {
+  const s = SYMPTOMS.find(x => x.id === symId);
+  const answers = state.quiz.answers;
+  // triage
+  let light = "green";
+  const flatFlags = answers.flat().map(a => a.flag);
+  if (flatFlags.includes("red")) light = "red";
+  else if (flatFlags.includes("amber")) light = "amber";
+
+  // demographic adjustments — high-risk groups: 嬰兒, 65+, immunocompromised, pregnant + abdominal
+  const profile = STORE.get("profile", null);
+  if (profile && !profile.skipped) {
+    if (profile.age === "嬰兒（<3 個月）" && symId === "fever") light = "red";
+    if (profile.age === "嬰兒（<3 個月）" && light === "green") light = "amber";
+    if (profile.pregnant === "是" && (symId === "abdominal" || symId === "chestpain")) {
+      if (light === "green") light = "amber";
+    }
+    const chronicHigh = ["免疫疾病","洗腎","心血管疾病","糖尿病"];
+    if (Array.isArray(profile.chronic) && profile.chronic.some(c => chronicHigh.includes(c))) {
+      if (light === "green" && (symId === "fever" || symId === "chestpain" || symId === "sob")) light = "amber";
+    }
+  }
+
+  const lightLabel = { red: "紅燈：建議立即就醫", amber: "黃燈：近期預約門診", green: "綠燈：可先觀察自我照護" }[light];
+  const record = {
+    id: "h_" + Date.now().toString(36),
+    symId, name: s.name, light, lightLabel,
+    t: Date.now(),
+  };
+  const history = STORE.get("history", []);
+  history.unshift(record);
+  STORE.set("history", history.slice(0, 50));
+  go({ name: "result", id: record.id }, true);
+}
+
+/* ===== Result ===== */
+function renderResult(recordId) {
+  const history = STORE.get("history", []);
+  const rec = history.find(h => h.id === recordId);
+  if (!rec) { go({ name: "home" }); return; }
+  const s = SYMPTOMS.find(x => x.id === rec.symId);
+
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack("檢查結果"));
+
+  const summary = {
+    red: { title: "建議盡快就醫評估", body: `根據你的回答，目前建議盡快尋求專業醫療評估。如果出現嚴重狀況（劇烈胸痛、意識改變、嚴重出血等），請立即撥 119 或前往急診。` },
+    amber: { title: "建議近期預約門診", body: `你的症狀有幾個值得醫師評估的徵兆。建議近 1–3 天內預約門診，避免拖延。` },
+    green: { title: "可以先自我觀察", body: `目前看來沒有明顯緊急徵兆，可以先在家觀察 1–3 天並注意是否惡化。如果出現下方警示徵兆請立即就醫。` },
+  }[rec.light];
+
+  const c = document.createElement("div");
+  c.className = "result-wrap";
+
+  const banner = document.createElement("div");
+  banner.className = `result-banner ${rec.light}`;
+  banner.innerHTML = `
+    <div class="light-tag"><span class="dot"></span>${rec.lightLabel}</div>
+    <h1>${s.emoji} ${s.name}</h1>
+    <p>${summary.body}</p>
+  `;
+  c.appendChild(banner);
+
+  // recommended action card
+  c.appendChild(card("建議行動", "light", `
+    <div style="font-size:15px;font-weight:600;color:var(--ink-900);margin-bottom:8px">${summary.title}</div>
+    <ul class="bullet">
+      ${rec.light === "red" ? `<li>若出現嚴重狀況請撥打 119 或前往最近急診</li>` : ""}
+      ${rec.light === "amber" ? `<li>近 1–3 天內預約門診</li><li>記錄症狀變化（時間、強度、誘發因素）</li>` : ""}
+      ${rec.light === "green" ? `<li>觀察 1–3 天，注意有無惡化</li><li>充分休息、補水、規律作息</li>` : ""}
+      <li>若症狀持續或惡化，回診評估</li>
+    </ul>
+  `));
+
+  // departments
+  let deptHtml = `<div class="chips">${s.depts.map(d => `<span class="chip">${d}</span>`).join("")}</div>`;
+  if (s.deptsAlt && s.deptsAlt.length) {
+    deptHtml += `<div style="margin-top:12px;font-size:12.5px;color:var(--ink-500);margin-bottom:6px">特殊情況可能轉診：</div>
+      <div class="chips">${s.deptsAlt.map(d => `<span class="chip alt">${d}</span>`).join("")}</div>`;
+  }
+  c.appendChild(card("建議科別", "dept", deptHtml));
+
+  // doctor questions
+  c.appendChild(card("給醫生的 3 個關鍵問題", "question", `
+    <div class="qlist">${s.questions.map(q => `<div class="qitem">${q}</div>`).join("")}</div>
+    <button class="btn-secondary" id="copyQs" style="margin-top:14px">📋 複製問題到剪貼簿</button>
+  `));
+
+  // watch outs
+  if (s.watchOuts && s.watchOuts.length) {
+    const w = document.createElement("div");
+    w.className = "watch-card";
+    w.innerHTML = `
+      <h3>${ICONS.watch} 出現以下狀況請立即就醫</h3>
+      <ul class="bullet">
+        ${s.watchOuts.map(x => `<li>${x}</li>`).join("")}
+      </ul>
+    `;
+    c.appendChild(w);
+  }
+
+  // disclaimer
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.innerHTML = `<strong>提醒：</strong>本結果根據你的回答給出建議，不是診斷。實際病因仍需醫師評估。緊急狀況請撥 119，心理困擾可撥 1925。`;
+  c.appendChild(disc);
+
+  // actions
+  const acts = document.createElement("div");
+  acts.className = "result-actions";
+  acts.innerHTML = `
+    <button class="btn-primary" id="newCheck">重新檢查</button>
+    <button class="btn-secondary" id="goBrowse">查看 ${s.name} 完整衛教</button>
+    <button class="btn-ghost" id="goHome">回首頁</button>
+  `;
+  acts.querySelector("#newCheck").addEventListener("click", () => go({ name: "redflag" }, true));
+  acts.querySelector("#goBrowse").addEventListener("click", () => go({ name: "detail", id: s.id }));
+  acts.querySelector("#goHome").addEventListener("click", () => go({ name: "home" }, true));
+  c.appendChild(acts);
+
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+
+  // copy
+  const copyBtn = wrap.querySelector("#copyQs");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", () => {
+      const txt = `關於我的「${s.name}」，想請教醫生：\n` + s.questions.map((q,i) => `${i+1}. ${q}`).join("\n");
+      navigator.clipboard?.writeText(txt).then(() => showToast("已複製到剪貼簿"));
+    });
+  }
+
+  // auto-saved already; show toast
+  showToast("已儲存到紀錄");
+}
+
+function card(title, iconKey, innerHtml) {
+  const el = document.createElement("div");
+  el.className = "result-card";
+  el.innerHTML = `<h3><span class="ico">${ICONS[iconKey] || ICONS.info}</span>${title}</h3>${innerHtml}`;
+  return el;
+}
+
+/* ===== History page ===== */
+function renderHistory() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  const tb = document.createElement("div");
+  tb.className = "topbar";
+  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">檢查紀錄</div>`;
+  wrap.appendChild(tb);
+
+  const history = STORE.get("history", []);
+  if (!history.length) {
+    wrap.appendChild(emptyState("📭", "還沒有檢查紀錄", "從首頁開始第一次症狀檢查"));
+  } else {
+    const sec = document.createElement("section");
+    sec.className = "block";
+    const list = document.createElement("div");
+    list.style.display = "flex"; list.style.flexDirection = "column"; list.style.gap = "8px";
+    history.forEach(h => list.appendChild(historyItem(h)));
+    sec.appendChild(list);
+
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "btn-ghost";
+    clearBtn.style.marginTop = "20px";
+    clearBtn.style.color = "var(--red)";
+    clearBtn.textContent = "清除所有紀錄";
+    clearBtn.addEventListener("click", () => {
+      if (confirm("確定要清除全部檢查紀錄嗎？此動作無法復原。")) {
+        STORE.set("history", []);
+        render();
+      }
+    });
+    sec.appendChild(clearBtn);
+    wrap.appendChild(sec);
+  }
+  app.appendChild(wrap);
+}
+
+function emptyState(emoji, title, subtitle) {
+  const e = document.createElement("div");
+  e.className = "empty";
+  e.innerHTML = `<div class="big">${emoji}</div><div style="font-size:15px;color:var(--ink-700);font-weight:600">${title}</div><div style="font-size:13px;margin-top:6px">${subtitle}</div>`;
+  return e;
+}
+
+/* ===== Profile ===== */
+function renderProfile() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  const tb = document.createElement("div");
+  tb.className = "topbar";
+  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">我的資料</div>`;
+  wrap.appendChild(tb);
+
+  const profile = STORE.get("profile", null);
+  const c = document.createElement("div");
+  c.style.padding = "16px 20px 32px";
+
+  if (!profile || profile.skipped) {
+    c.innerHTML = `
+      <div class="empty"><div class="big">👤</div>
+        <div style="font-size:15px;color:var(--ink-700);font-weight:600">尚未設定基本資料</div>
+        <div style="font-size:13px;margin-top:6px">填寫年齡層、性別、慢性病後，檢查結果會更貼近你的狀況</div>
+      </div>
+      <button class="btn-primary lg" style="margin-top:16px" id="setup">設定基本資料</button>
+    `;
+    c.querySelector("#setup").addEventListener("click", () => go({ name: "demographic" }));
+  } else {
+    const items = [
+      ["年齡層", profile.age || "—"],
+      ["生理性別", profile.sex || "—"],
+      ["懷孕", profile.pregnant || "—"],
+      ["慢性病", (profile.chronic && profile.chronic.length) ? profile.chronic.join("、") : "—"],
+    ];
+    c.innerHTML = items.map(([k, v]) => `
+      <div class="profile-card">
+        <div class="profile-key">${k}</div>
+        <div class="profile-val">${v}</div>
+      </div>
+    `).join("") + `
+      <button class="btn-secondary" id="edit" style="margin-top:14px">重新編輯</button>
+      <button class="btn-ghost" id="reset" style="color:var(--red)">清除資料</button>
+    `;
+    c.querySelector("#edit").addEventListener("click", () => go({ name: "demographic" }));
+    c.querySelector("#reset").addEventListener("click", () => {
+      if (confirm("確定要清除基本資料嗎？")) { STORE.del("profile"); render(); }
+    });
+  }
+
+  // about link block
+  const about = document.createElement("div");
+  about.style.marginTop = "24px";
+  about.innerHTML = `
+    <div class="block-head"><h2>關於</h2></div>
+    <button class="profile-card" style="width:100%;text-align:left" id="aboutLink">
+      <div class="profile-key">關於 Vitala</div>
+      <div class="sym-arrow">${ICONS.arrow}</div>
+    </button>
+  `;
+  about.querySelector("#aboutLink").addEventListener("click", () => go({ name: "about" }));
+  c.appendChild(about);
+
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+}
+
+/* ===== Browse (disease encyclopedia) ===== */
+function renderBrowse() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  const tb = document.createElement("div");
+  tb.className = "topbar";
+  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">疾病百科</div>`;
+  wrap.appendChild(tb);
+
+  const sw = document.createElement("div");
+  sw.style.padding = "12px 20px 0";
+  sw.innerHTML = `
+    <div style="position:relative;background:#fff;border:1.5px solid var(--line);border-radius:14px">
+      <div style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--ink-300)">${ICONS.search}</div>
+      <input type="text" id="bq" placeholder="搜尋疾病（如：糖尿病、高血壓、中風）" style="width:100%;border:0;background:transparent;outline:none;padding:13px 16px 13px 46px;font-size:15px;border-radius:14px">
+    </div>
+    <div id="bResults"></div>
+  `;
+  wrap.appendChild(sw);
+
+  // categories
+  const block = document.createElement("section");
+  block.className = "block";
+  block.innerHTML = `<div class="block-head"><h2>依分類瀏覽</h2></div><div class="cat-grid"></div>`;
+  const grid = block.querySelector(".cat-grid");
+  DISEASE_CATEGORIES.forEach(c => {
+    const count = DISEASES.filter(d => d.cat === c.id).length;
+    const btn = document.createElement("button");
+    btn.className = "cat-card";
+    btn.innerHTML = `
+      <div class="cat-icon">${ICONS[c.icon] || ICONS.spark}</div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-count">${count} 種疾病</div>
+    `;
+    btn.addEventListener("click", () => go({ name: "category", id: c.id, mode: "browse" }));
+    grid.appendChild(btn);
+  });
+  wrap.appendChild(block);
+
+  // search
+  const bq = wrap.querySelector("#bq");
+  const bRes = wrap.querySelector("#bResults");
+  bq.addEventListener("input", () => {
+    const q = bq.value.trim();
+    if (!q) { bRes.innerHTML = ""; return; }
+    const matches = DISEASES.filter(d => d.name.includes(q) || d.short.includes(q) || (d.summary||"").includes(q) || (d.causes||[]).some(c=>c.includes(q)));
+    if (!matches.length) {
+      bRes.innerHTML = `<div class="empty"><div class="big">🔍</div>找不到「${escapeHtml(q)}」</div>`;
+      return;
+    }
+    bRes.innerHTML = `<div class="block-head" style="padding-top:12px;margin-bottom:6px"><h2>搜尋結果（${matches.length}）</h2></div>`;
+    const list = document.createElement("div");
+    list.className = "sym-list";
+    matches.forEach(d => list.appendChild(diseaseBrowseItem(d)));
+    bRes.appendChild(list);
+  });
+
+  app.appendChild(wrap);
+}
+
+/* ===== Detail (read-only encyclopedia) ===== */
+function renderDetail(id) {
+  const s = DISEASES.find(x => x.id === id);
+  if (!s) { go({ name: "browse" }); return; }
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack(s.name));
+
+  const detail = document.createElement("div");
+  detail.className = "detail";
+
+  const hero = document.createElement("div");
+  hero.className = "detail-hero";
+  hero.innerHTML = `
+    <div class="detail-emoji">${s.emoji}</div>
+    <div class="detail-title">${s.name}</div>
+    <div class="detail-sub">${s.short}</div>
+  `;
+  detail.appendChild(hero);
+
+  detail.appendChild(card("概述", "info", `<p style="font-size:14.5px;color:var(--ink-700);line-height:1.75">${s.summary}</p>`));
+  detail.appendChild(card("病因", "cause", `<ul class="bullet">${s.causes.map(c => `<li>${c}</li>`).join("")}</ul>`));
+
+  if (s.treatment && s.treatment.length) {
+    detail.appendChild(card("治療方式", "pill", `<ul class="bullet">${s.treatment.map(t => `<li>${t}</li>`).join("")}</ul>`));
+  }
+  if (s.prevention && s.prevention.length) {
+    detail.appendChild(card("預防", "shield", `<ul class="bullet">${s.prevention.map(p => `<li>${p}</li>`).join("")}</ul>`));
+  }
+
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.innerHTML = `<strong>提醒：</strong>本內容僅作為衛教參考，不能取代醫師的診斷與治療。緊急狀況請撥打 119。`;
+  detail.appendChild(disc);
+
+  wrap.appendChild(detail);
+  app.appendChild(wrap);
+}
+
+/* ===== About ===== */
+function renderAbout() {
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack("關於 Vitala"));
+
+  const c = document.createElement("div");
+  c.style.padding = "20px";
+  c.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+      <div class="brand-mark" style="width:48px;height:48px;border-radius:14px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M5 19c0-7 5-13 14-13 0 9-6 14-13 14"/><path d="M5 19c2-3 5-6 9-8"/></svg>
+      </div>
+      <div>
+        <div style="font-size:22px;font-weight:700;color:var(--mint-700);letter-spacing:-0.4px">Vitala</div>
+        <div style="font-size:12.5px;color:var(--ink-500)">Understand. Decide. Feel better.</div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <h3>${ICONS.info ? `<span class="ico">${ICONS.info}</span>` : ""}我們在做什麼</h3>
+      <p style="font-size:14px;color:var(--ink-700);line-height:1.7">Vitala 是一款症狀檢查 app，幫你把混亂的醫療資訊整理成三個清楚的答案：<strong>急不急、看哪一科、進診間要問什麼</strong>。</p>
+    </div>
+
+    <div class="result-card">
+      <h3>每次檢查包含</h3>
+      <p style="font-size:14px;color:var(--ink-700);line-height:1.85">
+        · 緊急狀況守門員<br>
+        · 5–6 個關鍵問題<br>
+        · 紅黃綠急迫性燈號<br>
+        · 在台灣的建議科別<br>
+        · 給醫生的 3 個關鍵問題<br>
+        · 後續惡化警示
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>緊急資源</h3>
+      <p style="font-size:14px;color:var(--ink-700);line-height:1.85">
+        · 緊急救護：<strong>119</strong><br>
+        · 安心專線：<strong>1925</strong>（24h 心理支持）<br>
+        · 生命線：<strong>1995</strong><br>
+        · 健保諮詢：<strong>0800-030-598</strong>
+      </p>
+    </div>
+
+    <div class="result-card">
+      <h3>內容來源</h3>
+      <p style="font-size:14px;color:var(--ink-700);line-height:1.7">內容彙整自衛福部、NHS、UpToDate 等公開衛教資料的常識性內容，僅供衛教參考，不能取代醫師診斷。</p>
+    </div>
+
+    <div style="text-align:center;color:var(--ink-300);font-size:12px;margin-top:24px">
+      © Vitala · 衛教資訊參考用
+    </div>
+  `;
+  wrap.appendChild(c);
+  app.appendChild(wrap);
+}
+
+/* ===== Bottom nav ===== */
+function renderBottomNav() {
+  const el = document.createElement("nav");
+  el.className = "botnav";
+  const r = state.route.name;
+  el.innerHTML = `
+    <button class="nav-btn ${r==='home'?'active':''}" data-go="home">${ICONS.home}<span>首頁</span></button>
+    <button class="nav-btn ${r==='browse'?'active':''}" data-go="browse">${ICONS.list}<span>百科</span></button>
+    <button class="nav-btn ${r==='history'?'active':''}" data-go="history">${ICONS.history}<span>紀錄</span></button>
+    <button class="nav-btn ${r==='profile'?'active':''}" data-go="profile">${ICONS.user}<span>我</span></button>
+  `;
+  el.querySelectorAll("[data-go]").forEach(b => {
+    b.addEventListener("click", () => go({ name: b.dataset.go }, true));
+  });
+  return el;
+}
+
+/* ===== Toast ===== */
+function showToast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2300);
+}
+
+/* ===== Util ===== */
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function formatDate(t) {
+  const d = new Date(t);
+  const today = new Date();
+  const sameDay = d.toDateString() === today.toDateString();
+  const yest = new Date(today); yest.setDate(today.getDate() - 1);
+  const isYest = d.toDateString() === yest.toDateString();
+  const hh = String(d.getHours()).padStart(2,"0"), mm = String(d.getMinutes()).padStart(2,"0");
+  if (sameDay) return `今天 ${hh}:${mm}`;
+  if (isYest) return `昨天 ${hh}:${mm}`;
+  return `${d.getMonth()+1}/${d.getDate()} ${hh}:${mm}`;
+}
+
+/* ===== INIT ===== */
+history.replaceState({ name: "splash" }, "", "");
+render();
+</script>
+</body>
+</html>
