@@ -722,6 +722,48 @@
   }
   .profile-key { font-size: 13.5px; color: var(--ink-500); }
   .profile-val { font-size: 15px; font-weight: 600; color: var(--ink-900); }
+
+  /* ===== Map page ===== */
+  .map-page { display: flex; flex-direction: column; height: 100vh; position: relative; }
+  #leaflet-map { flex: 1; width: 100%; min-height: 0; }
+  .map-legend {
+    position: absolute; bottom: 74px; left: 12px; z-index: 1000;
+    background: rgba(255,255,255,.93); border-radius: 12px; padding: 8px 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.12); font-size: 12px; color: var(--ink-700);
+    backdrop-filter: blur(6px);
+  }
+  .map-legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .map-legend-row:last-child { margin-bottom: 0; }
+  .map-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .map-loading {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; background: var(--cream);
+    z-index: 999; gap: 12px; font-size: 14px; color: var(--ink-500);
+  }
+  .map-spinner {
+    width: 36px; height: 36px; border: 3px solid var(--line);
+    border-top-color: var(--mint-500); border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .map-popup-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .map-popup-type { font-size: 12px; color: #666; margin-bottom: 6px; }
+  .map-popup-nav {
+    display: inline-block; padding: 5px 12px; background: var(--mint-700); color: #fff;
+    border-radius: 8px; font-size: 12.5px; text-decoration: none; font-weight: 600;
+  }
+  .map-filter-bar {
+    display: flex; gap: 6px; padding: 10px 14px; background: #fff;
+    border-bottom: 1px solid var(--line); overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .map-filter-bar::-webkit-scrollbar { display: none; }
+  .map-filter-btn {
+    padding: 5px 13px; border-radius: 99px; border: 1.5px solid var(--line);
+    font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    background: #fff; color: var(--ink-500); flex-shrink: 0; transition: all .15s;
+  }
+  .map-filter-btn.on { background: var(--mint-700); color: #fff; border-color: var(--mint-700); }
 </style>
 </head>
 <body>
@@ -2171,11 +2213,12 @@ function render() {
     case "category":    renderCategory(r.id); break;
     case "symdetail":   renderSymDetail(r.id); break;
     case "detail":      renderDetail(r.id); break;
+    case "map":         renderMap(); break;
     case "about":       renderAbout(); break;
     default:            renderHome(); break;
   }
   // bottom nav for main pages
-  if (["home","browse","history","profile"].includes(r.name)) {
+  if (["home","browse","history","profile","map"].includes(r.name)) {
     app.appendChild(renderBottomNav());
   }
 }
@@ -3432,6 +3475,172 @@ function renderDetail(id) {
   app.appendChild(wrap);
 }
 
+/* ===== Map page ===== */
+let _leafletLoaded = false;
+let _mapInstance   = null;
+const MAP_TYPES = {
+  hospital:  { label:"醫院",   color:"#D45B5B", emoji:"🏥" },
+  clinic:    { label:"診所",   color:"#4F9985", emoji:"🩺" },
+  pharmacy:  { label:"藥局",   color:"#5B8DD4", emoji:"💊" },
+  emergency: { label:"急診",   color:"#D4935B", emoji:"🚨" },
+};
+let _mapFilters = new Set(Object.keys(MAP_TYPES));
+let _mapMarkers = {};   // type → L.LayerGroup
+
+function renderMap() {
+  if (_mapInstance) { try { _mapInstance.remove(); } catch(e){} _mapInstance = null; }
+
+  const wrap = document.createElement("div");
+  wrap.className = "map-page";
+
+  // topbar
+  const tb = document.createElement("div");
+  tb.className = "topbar";
+  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">附近醫療院所</div>`;
+  wrap.appendChild(tb);
+
+  // filter bar
+  const fb = document.createElement("div");
+  fb.className = "map-filter-bar";
+  Object.entries(MAP_TYPES).forEach(([k, v]) => {
+    const btn = document.createElement("button");
+    btn.className = "map-filter-btn" + (_mapFilters.has(k) ? " on" : "");
+    btn.textContent = v.emoji + " " + v.label;
+    btn.dataset.type = k;
+    btn.addEventListener("click", () => {
+      if (_mapFilters.has(k)) _mapFilters.delete(k); else _mapFilters.add(k);
+      btn.classList.toggle("on");
+      Object.entries(_mapMarkers).forEach(([type, group]) => {
+        if (_mapFilters.has(type)) group.addTo(_mapInstance);
+        else group.remove();
+      });
+    });
+    fb.appendChild(btn);
+  });
+  wrap.appendChild(fb);
+
+  // map container
+  const mapEl = document.createElement("div");
+  mapEl.id = "leaflet-map";
+  wrap.appendChild(mapEl);
+
+  // loading overlay
+  const loading = document.createElement("div");
+  loading.className = "map-loading";
+  loading.innerHTML = `<div class="map-spinner"></div><div>正在取得位置…</div>`;
+  mapEl.appendChild(loading);
+
+  // legend
+  const legend = document.createElement("div");
+  legend.className = "map-legend";
+  legend.innerHTML = Object.values(MAP_TYPES).map(v =>
+    `<div class="map-legend-row"><div class="map-dot" style="background:${v.color}"></div>${v.label}</div>`
+  ).join("");
+  wrap.appendChild(legend);
+
+  app.appendChild(wrap);
+
+  function initWithCoords(lat, lng) {
+    loadLeaflet(() => {
+      loading.remove();
+      const L = window.L;
+      _mapInstance = L.map("leaflet-map", { zoomControl: true }).setView([lat, lng], 15);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors", maxZoom: 19
+      }).addTo(_mapInstance);
+
+      // user marker
+      L.circleMarker([lat, lng], {
+        radius: 9, fillColor: "#fff", color: "#4F9985", weight: 3, fillOpacity: 1
+      }).addTo(_mapInstance).bindPopup("你在這裡");
+
+      // init layer groups
+      Object.keys(MAP_TYPES).forEach(k => {
+        _mapMarkers[k] = L.layerGroup().addTo(_mapInstance);
+      });
+
+      fetchNearby(lat, lng, L);
+    });
+  }
+
+  function fetchNearby(lat, lng, L) {
+    const r = 2500;
+    const q = `[out:json][timeout:15];
+(
+  node["amenity"="hospital"](around:${r},${lat},${lng});
+  way["amenity"="hospital"](around:${r},${lat},${lng});
+  node["amenity"="clinic"](around:${r},${lat},${lng});
+  way["amenity"="clinic"](around:${r},${lat},${lng});
+  node["amenity"="doctors"](around:${r},${lat},${lng});
+  node["amenity"="pharmacy"](around:${r},${lat},${lng});
+  way["amenity"="pharmacy"](around:${r},${lat},${lng});
+  node["emergency"="yes"](around:${r},${lat},${lng});
+  node["amenity"="hospital"]["emergency"="yes"](around:${r},${lat},${lng});
+);
+out center;`;
+
+    fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST", body: q
+    }).then(r => r.json()).then(data => {
+      data.elements.forEach(el => {
+        const elLat = el.lat ?? el.center?.lat;
+        const elLng = el.lon ?? el.center?.lon;
+        if (!elLat || !elLng) return;
+        const tags = el.tags || {};
+        const name = tags.name || tags["name:zh"] || tags["name:en"] || "（無名稱）";
+
+        let type = "clinic";
+        if (tags.amenity === "hospital" || tags.emergency === "yes") type = "hospital";
+        if (tags.amenity === "pharmacy") type = "pharmacy";
+        if (tags.emergency === "yes" && tags.amenity === "hospital") type = "emergency";
+
+        const cfg = MAP_TYPES[type];
+        const icon = L.divIcon({
+          className: "",
+          html: `<div style="width:28px;height:28px;background:${cfg.color};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.25);border:2px solid #fff">${cfg.emoji}</div>`,
+          iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -16]
+        });
+
+        const gmLink = `https://maps.google.com/?q=${encodeURIComponent(name)}&ll=${elLat},${elLng}`;
+        const marker = L.marker([elLat, elLng], { icon })
+          .bindPopup(`<div class="map-popup-name">${name}</div><div class="map-popup-type">${cfg.emoji} ${cfg.label}</div><a class="map-popup-nav" href="${gmLink}" target="_blank">Google Maps 導航</a>`);
+
+        if (_mapMarkers[type]) {
+          marker.addTo(_mapMarkers[type]);
+          if (!_mapFilters.has(type)) _mapMarkers[type].remove();
+        }
+      });
+    }).catch(() => {
+      showToast("資料載入失敗，請稍後再試");
+    });
+  }
+
+  // get location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => initWithCoords(pos.coords.latitude, pos.coords.longitude),
+      ()  => {
+        loading.innerHTML = `<div style="font-size:28px">📍</div><div>無法取得位置<br><span style="font-size:12px;color:var(--ink-400)">請允許位置權限後重新整理</span></div>`;
+      },
+      { timeout: 8000 }
+    );
+  } else {
+    loading.innerHTML = `<div>此裝置不支援定位</div>`;
+  }
+}
+
+function loadLeaflet(cb) {
+  if (_leafletLoaded && window.L) { cb(); return; }
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+  document.head.appendChild(link);
+  const script = document.createElement("script");
+  script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  script.onload = () => { _leafletLoaded = true; cb(); };
+  document.head.appendChild(script);
+}
+
 /* ===== About ===== */
 function renderAbout() {
   const wrap = document.createElement("div");
@@ -3499,6 +3708,7 @@ function renderBottomNav() {
   el.innerHTML = `
     <button class="nav-btn ${r==='home'?'active':''}" data-go="home">${ICONS.home}<span>首頁</span></button>
     <button class="nav-btn ${r==='browse'?'active':''}" data-go="browse">${ICONS.list}<span>百科</span></button>
+    <button class="nav-btn ${r==='map'?'active':''}" data-go="map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>地圖</span></button>
     <button class="nav-btn ${r==='history'?'active':''}" data-go="history">${ICONS.history}<span>健康</span></button>
     <button class="nav-btn ${r==='profile'?'active':''}" data-go="profile">${ICONS.user}<span>我</span></button>
   `;
