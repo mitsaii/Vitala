@@ -1961,6 +1961,7 @@ function render() {
     case "profile":     renderProfile(); break;
     case "browse":      renderBrowse(); break;
     case "category":    renderCategory(r.id); break;
+    case "symdetail":   renderSymDetail(r.id); break;
     case "detail":      renderDetail(r.id); break;
     case "about":       renderAbout(); break;
     default:            renderHome(); break;
@@ -2629,7 +2630,7 @@ function renderResult(recordId) {
     <button class="btn-ghost" id="goHome">回首頁</button>
   `;
   acts.querySelector("#newCheck").addEventListener("click", () => go({ name: "redflag" }, true));
-  acts.querySelector("#goBrowse").addEventListener("click", () => go({ name: "detail", id: s.id }));
+  acts.querySelector("#goBrowse").addEventListener("click", () => go({ name: "symdetail", id: s.id }));
   acts.querySelector("#goHome").addEventListener("click", () => go({ name: "home" }, true));
   c.appendChild(acts);
 
@@ -2818,6 +2819,59 @@ function renderBrowse() {
     bRes.appendChild(list);
   });
 
+  app.appendChild(wrap);
+}
+
+/* ===== Symptom Detail (health education for a symptom) ===== */
+function renderSymDetail(id) {
+  const s = SYMPTOMS.find(x => x.id === id);
+  if (!s) { go({ name: "browse" }); return; }
+  const wrap = document.createElement("div");
+  wrap.className = "page scroll-area";
+  wrap.appendChild(topbarBack(s.name + " 衛教"));
+
+  const detail = document.createElement("div");
+  detail.className = "detail";
+
+  const hero = document.createElement("div");
+  hero.className = "detail-hero";
+  hero.innerHTML = `
+    <div class="detail-emoji">${s.emoji}</div>
+    <div class="detail-title">${s.name}</div>
+    <div class="detail-sub">${s.short}</div>
+  `;
+  detail.appendChild(hero);
+
+  if (s.summary) {
+    detail.appendChild(card("概述", "info", `<p style="font-size:14.5px;color:var(--ink-700);line-height:1.75">${s.summary}</p>`));
+  }
+  if (s.causes && s.causes.length) {
+    detail.appendChild(card("可能原因", "cause", `<ul class="bullet">${s.causes.map(c => `<li>${c}</li>`).join("")}</ul>`));
+  }
+  if (s.treatment && s.treatment.length) {
+    detail.appendChild(card("居家處理與治療", "pill", `<ul class="bullet">${s.treatment.map(t => `<li>${t}</li>`).join("")}</ul>`));
+  }
+  if (s.prevention && s.prevention.length) {
+    detail.appendChild(card("預防方式", "shield", `<ul class="bullet">${s.prevention.map(p => `<li>${p}</li>`).join("")}</ul>`));
+  }
+  if (s.depts && s.depts.length) {
+    const deptHtml = `<div class="chips">${s.depts.map(d => `<span class="chip">${d}</span>`).join("")}</div>`
+      + (s.deptsAlt && s.deptsAlt.length ? `<div style="margin-top:12px;font-size:12.5px;color:var(--ink-500);margin-bottom:6px">特殊情況可能轉診：</div><div class="chips">${s.deptsAlt.map(d => `<span class="chip alt">${d}</span>`).join("")}</div>` : "");
+    detail.appendChild(card("建議科別", "dept", deptHtml));
+  }
+  if (s.watchOuts && s.watchOuts.length) {
+    const w = document.createElement("div");
+    w.className = "watch-card";
+    w.innerHTML = `<h3>${ICONS.watch} 出現以下狀況請立即就醫</h3><ul class="bullet">${s.watchOuts.map(x => `<li>${x}</li>`).join("")}</ul>`;
+    detail.appendChild(w);
+  }
+
+  const disc = document.createElement("div");
+  disc.className = "disclaimer";
+  disc.innerHTML = `<strong>提醒：</strong>本內容僅作為衛教參考，不能取代醫師的診斷與治療。緊急狀況請撥打 119。`;
+  detail.appendChild(disc);
+
+  wrap.appendChild(detail);
   app.appendChild(wrap);
 }
 
