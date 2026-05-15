@@ -599,6 +599,88 @@
   .page { animation: fadeIn .25s ease both; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
+  /* ===== Health Journal (新紀錄頁) ===== */
+  .tab-bar {
+    display: flex; background: var(--mint-50); border-radius: 12px; padding: 4px;
+    margin: 14px 20px 0;
+  }
+  .tab-btn {
+    flex: 1; padding: 9px 0; border-radius: 9px; font-size: 14px; font-weight: 600;
+    color: var(--ink-500); background: transparent; border: none; cursor: pointer;
+    transition: background .18s, color .18s;
+  }
+  .tab-btn.active { background: #fff; color: var(--mint-700); box-shadow: 0 1px 4px rgba(0,0,0,.10); }
+  .journal-list { display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 0; }
+  .journal-card {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 16px;
+    padding: 14px 16px; text-align: left; width: 100%;
+  }
+  .journal-card:active { opacity: .85; }
+  .jc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .jc-date { font-size: 13px; font-weight: 700; color: var(--mint-700); }
+  .jc-mood { font-size: 18px; }
+  .jc-sev { font-size: 12px; padding: 2px 8px; border-radius: 99px; font-weight: 600; margin-left: auto; }
+  .jc-sev.s1,.jc-sev.s2 { background: #E6F4EE; color: var(--mint-700); }
+  .jc-sev.s3 { background: var(--amber-bg); color: var(--amber-strong); }
+  .jc-sev.s4,.jc-sev.s5 { background: var(--red-bg); color: var(--red-strong); }
+  .jc-syms { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+  .jc-sym-tag { font-size: 12px; padding: 3px 10px; background: var(--mint-100); color: var(--mint-700); border-radius: 99px; font-weight: 500; }
+  .jc-note { font-size: 13px; color: var(--ink-500); line-height: 1.55; white-space: pre-wrap; }
+  .visit-card {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 16px;
+    padding: 14px 16px; text-align: left; width: 100%;
+  }
+  .vc-top { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .vc-date { font-size: 13px; font-weight: 700; color: var(--mint-700); }
+  .vc-dept { font-size: 12px; padding: 2px 9px; background: var(--mint-100); color: var(--mint-700); border-radius: 99px; font-weight: 600; }
+  .vc-clinic { font-size: 14px; font-weight: 700; color: var(--ink-900); margin-bottom: 4px; }
+  .vc-row { font-size: 12.5px; color: var(--ink-500); margin-bottom: 2px; }
+  .vc-row strong { color: var(--ink-700); }
+  .add-fab {
+    position: fixed; right: 20px; bottom: 86px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--mint-700); color: #fff;
+    font-size: 26px; line-height: 52px; text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,.22);
+    border: none; cursor: pointer; z-index: 50;
+    transition: transform .15s;
+  }
+  .add-fab:active { transform: scale(.93); }
+  .form-sheet {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200;
+    display: flex; align-items: flex-end;
+  }
+  .form-inner {
+    background: #fff; border-radius: 20px 20px 0 0; width: 100%;
+    padding: 20px 20px 40px; max-height: 90vh; overflow-y: auto;
+  }
+  .form-title { font-size: 17px; font-weight: 700; color: var(--ink-900); margin-bottom: 16px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--ink-500); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px;
+    font-size: 15px; color: var(--ink-900); background: #fff; outline: none;
+    font-family: inherit;
+  }
+  .form-input:focus { border-color: var(--mint-400); }
+  .form-group { margin-bottom: 14px; }
+  .sev-row { display: flex; gap: 8px; }
+  .sev-btn {
+    flex: 1; padding: 8px 0; border-radius: 10px; border: 1.5px solid var(--line);
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
+    background: #fff; color: var(--ink-500);
+  }
+  .sev-btn.sel { background: var(--mint-700); color: #fff; border-color: var(--mint-700); }
+  .mood-row { display: flex; gap: 10px; justify-content: center; }
+  .mood-btn { font-size: 26px; cursor: pointer; opacity: .4; transition: opacity .15s, transform .15s; }
+  .mood-btn.sel { opacity: 1; transform: scale(1.2); }
+  .sym-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .sym-chip {
+    padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--line);
+    font-size: 12.5px; font-weight: 500; cursor: pointer; background: #fff; color: var(--ink-700);
+    transition: all .15s;
+  }
+  .sym-chip.sel { background: var(--mint-700); color: #fff; border-color: var(--mint-700); }
+
   /* ===== Toast ===== */
   .toast {
     position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%);
@@ -2767,41 +2849,346 @@ function card(title, iconKey, innerHtml) {
   return el;
 }
 
-/* ===== History page ===== */
+/* ===== Health Journal (合併健康日記 + 就診紀錄) ===== */
+const MOODS = ["😔","😕","😐","🙂","😄"];
+const SEV_LABELS = ["","輕微","輕中","中等","較重","嚴重"];
+const QUICK_SYMS = ["頭痛","發燒","咳嗽","喉嚨痛","疲倦","腹痛","噁心","頭暈","失眠","焦慮","背痛","流鼻水"];
+
 function renderHistory() {
   const wrap = document.createElement("div");
   wrap.className = "page scroll-area";
+  wrap.style.paddingBottom = "100px";
+
+  // topbar
   const tb = document.createElement("div");
   tb.className = "topbar";
-  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">檢查紀錄</div>`;
+  tb.innerHTML = `<div class="title" style="font-size:18px;font-weight:700;color:var(--mint-700)">健康紀錄</div>`;
   wrap.appendChild(tb);
 
-  const history = STORE.get("history", []);
-  if (!history.length) {
-    wrap.appendChild(emptyState("📭", "還沒有檢查紀錄", "從首頁開始第一次症狀檢查"));
-  } else {
-    const sec = document.createElement("section");
-    sec.className = "block";
-    const list = document.createElement("div");
-    list.style.display = "flex"; list.style.flexDirection = "column"; list.style.gap = "8px";
-    history.forEach(h => list.appendChild(historyItem(h)));
-    sec.appendChild(list);
+  // tab bar
+  const activeTab = state.route.tab || "diary";
+  const tabBar = document.createElement("div");
+  tabBar.className = "tab-bar";
+  tabBar.innerHTML = `
+    <button class="tab-btn ${activeTab==='diary'?'active':''}" id="tabDiary">📋 健康日記</button>
+    <button class="tab-btn ${activeTab==='visit'?'active':''}" id="tabVisit">🏥 就診紀錄</button>
+  `;
+  wrap.appendChild(tabBar);
 
-    const clearBtn = document.createElement("button");
-    clearBtn.className = "btn-ghost";
-    clearBtn.style.marginTop = "20px";
-    clearBtn.style.color = "var(--red)";
-    clearBtn.textContent = "清除所有紀錄";
-    clearBtn.addEventListener("click", () => {
-      if (confirm("確定要清除全部檢查紀錄嗎？此動作無法復原。")) {
-        STORE.set("history", []);
-        render();
+  // content area
+  const content = document.createElement("div");
+  content.id = "journalContent";
+  wrap.appendChild(content);
+
+  function switchTab(tab) {
+    state.route.tab = tab;
+    wrap.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    wrap.querySelector(tab==="diary" ? "#tabDiary" : "#tabVisit").classList.add("active");
+    renderTabContent(tab, content, wrap);
+  }
+
+  tabBar.querySelector("#tabDiary").addEventListener("click", () => switchTab("diary"));
+  tabBar.querySelector("#tabVisit").addEventListener("click", () => switchTab("visit"));
+
+  renderTabContent(activeTab, content, wrap);
+  app.appendChild(wrap);
+
+  // FAB
+  const fab = document.createElement("button");
+  fab.className = "add-fab";
+  fab.textContent = "+";
+  fab.addEventListener("click", () => {
+    if (state.route.tab === "diary") showDiaryForm();
+    else showVisitForm();
+  });
+  app.appendChild(fab);
+}
+
+function renderTabContent(tab, content, wrap) {
+  content.innerHTML = "";
+  if (tab === "diary") renderDiaryTab(content);
+  else renderVisitTab(content);
+}
+
+/* --- 健康日記 tab --- */
+function renderDiaryTab(container) {
+  const entries = STORE.get("diary", []);
+
+  // 症狀檢查紀錄（原有）
+  const checks = STORE.get("history", []);
+
+  if (!entries.length && !checks.length) {
+    container.appendChild(emptyState("📖", "還沒有日記", "點右下角 ＋ 記錄今天的健康狀況"));
+    return;
+  }
+
+  if (entries.length) {
+    const list = document.createElement("div");
+    list.className = "journal-list";
+    [...entries].sort((a,b) => b.t - a.t).forEach(e => {
+      const card = document.createElement("div");
+      card.className = "journal-card";
+      const sevClass = `s${e.sev||1}`;
+      card.innerHTML = `
+        <div class="jc-top">
+          <span class="jc-date">${formatDateShort(e.date)}</span>
+          <span class="jc-mood">${MOODS[(e.mood||3)-1]}</span>
+          ${e.sev ? `<span class="jc-sev ${sevClass}">${SEV_LABELS[e.sev]}</span>` : ""}
+        </div>
+        ${e.syms && e.syms.length ? `<div class="jc-syms">${e.syms.map(s=>`<span class="jc-sym-tag">${s}</span>`).join("")}</div>` : ""}
+        ${e.note ? `<div class="jc-note">${escapeHtml(e.note)}</div>` : ""}
+      `;
+      // swipe-like delete via long press
+      let del = document.createElement("button");
+      del.style.cssText = "float:right;background:none;border:none;color:var(--ink-300);font-size:16px;cursor:pointer;padding:0 0 8px 8px";
+      del.textContent = "✕";
+      del.addEventListener("click", e2 => {
+        e2.stopPropagation();
+        if (confirm("刪除這筆日記？")) {
+          const d = STORE.get("diary", []).filter(x => x.id !== e.id);
+          STORE.set("diary", d); renderTabContent("diary", container.parentElement.querySelector("#journalContent"), container.parentElement);
+        }
+      });
+      card.prepend(del);
+      list.appendChild(card);
+    });
+    container.appendChild(list);
+  }
+
+  // 症狀檢查紀錄摺疊區
+  if (checks.length) {
+    const sec = document.createElement("div");
+    sec.style.padding = "18px 20px 0";
+    sec.innerHTML = `<div class="block-head" style="margin-bottom:8px"><h2>症狀檢查紀錄</h2></div>`;
+    const list2 = document.createElement("div");
+    checks.slice(0,5).forEach(h => list2.appendChild(historyItem(h)));
+    sec.appendChild(list2);
+    if (checks.length > 5) {
+      const more = document.createElement("div");
+      more.style.cssText = "text-align:center;font-size:13px;color:var(--ink-400);padding:8px 0";
+      more.textContent = `還有 ${checks.length-5} 筆…`;
+      sec.appendChild(more);
+    }
+    container.appendChild(sec);
+  }
+}
+
+/* --- 就診紀錄 tab --- */
+function renderVisitTab(container) {
+  const visits = STORE.get("visits", []);
+  if (!visits.length) {
+    container.appendChild(emptyState("🏥", "還沒有就診紀錄", "點右下角 ＋ 新增一筆就診記錄"));
+    return;
+  }
+  const list = document.createElement("div");
+  list.className = "journal-list";
+  [...visits].sort((a,b) => b.t - a.t).forEach(v => {
+    const card = document.createElement("div");
+    card.className = "visit-card";
+    card.innerHTML = `
+      <div class="vc-top">
+        <span class="vc-date">${formatDateShort(v.date)}</span>
+        ${v.dept ? `<span class="vc-dept">${v.dept}</span>` : ""}
+      </div>
+      <div class="vc-clinic">${escapeHtml(v.clinic||"（未填診所）")}</div>
+      ${v.doctor ? `<div class="vc-row"><strong>醫師：</strong>${escapeHtml(v.doctor)}</div>` : ""}
+      ${v.diagnosis ? `<div class="vc-row"><strong>診斷：</strong>${escapeHtml(v.diagnosis)}</div>` : ""}
+      ${v.meds ? `<div class="vc-row"><strong>用藥：</strong>${escapeHtml(v.meds)}</div>` : ""}
+      ${v.nextVisit ? `<div class="vc-row"><strong>下次回診：</strong>${formatDateShort(v.nextVisit)}</div>` : ""}
+      ${v.note ? `<div class="vc-row" style="margin-top:6px">${escapeHtml(v.note)}</div>` : ""}
+    `;
+    let del = document.createElement("button");
+    del.style.cssText = "float:right;background:none;border:none;color:var(--ink-300);font-size:16px;cursor:pointer;padding:0 0 8px 8px";
+    del.textContent = "✕";
+    del.addEventListener("click", e2 => {
+      e2.stopPropagation();
+      if (confirm("刪除這筆就診紀錄？")) {
+        const d = STORE.get("visits", []).filter(x => x.id !== v.id);
+        STORE.set("visits", d); render();
       }
     });
-    sec.appendChild(clearBtn);
-    wrap.appendChild(sec);
-  }
-  app.appendChild(wrap);
+    card.prepend(del);
+    list.appendChild(card);
+  });
+  container.appendChild(list);
+}
+
+/* --- 健康日記表單 --- */
+function showDiaryForm(prefill) {
+  const sheet = document.createElement("div");
+  sheet.className = "form-sheet";
+  const today = new Date().toISOString().slice(0,10);
+  let selMood = prefill?.mood || 3;
+  let selSev  = prefill?.sev  || 2;
+  let selSyms = new Set(prefill?.syms || []);
+
+  sheet.innerHTML = `
+    <div class="form-inner">
+      <div class="form-title">📋 新增健康日記</div>
+      <div class="form-group">
+        <label class="form-label">日期</label>
+        <input class="form-input" type="date" id="fi-date" value="${prefill?.date||today}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">心情</label>
+        <div class="mood-row" id="fi-mood">
+          ${MOODS.map((m,i)=>`<span class="mood-btn${selMood===i+1?' sel':''}" data-mood="${i+1}">${m}</span>`).join("")}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">狀況嚴重度</label>
+        <div class="sev-row" id="fi-sev">
+          ${[1,2,3,4,5].map(n=>`<button class="sev-btn${selSev===n?' sel':''}" data-sev="${n}">${SEV_LABELS[n]}</button>`).join("")}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">症狀（可多選）</label>
+        <div class="sym-chips" id="fi-syms">
+          ${QUICK_SYMS.map(s=>`<span class="sym-chip${selSyms.has(s)?' sel':''}" data-sym="${s}">${s}</span>`).join("")}
+        </div>
+        <input class="form-input" type="text" id="fi-sym-custom" placeholder="其他症狀（用逗號分隔）" style="margin-top:8px" value="${prefill?.customSym||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">備註</label>
+        <textarea class="form-input" id="fi-note" rows="3" placeholder="今天的感受、用藥、其他觀察…" style="resize:none">${escapeHtml(prefill?.note||'')}</textarea>
+      </div>
+      <button class="btn-primary lg" id="fi-save" style="margin-bottom:10px">儲存日記</button>
+      <button class="btn-ghost" id="fi-cancel">取消</button>
+    </div>
+  `;
+
+  document.body.appendChild(sheet);
+
+  // mood
+  sheet.querySelectorAll(".mood-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      selMood = +b.dataset.mood;
+      sheet.querySelectorAll(".mood-btn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel");
+    });
+  });
+  // severity
+  sheet.querySelectorAll(".sev-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      selSev = +b.dataset.sev;
+      sheet.querySelectorAll(".sev-btn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel");
+    });
+  });
+  // sym chips
+  sheet.querySelectorAll(".sym-chip").forEach(b => {
+    b.addEventListener("click", () => {
+      const s = b.dataset.sym;
+      if (selSyms.has(s)) { selSyms.delete(s); b.classList.remove("sel"); }
+      else { selSyms.add(s); b.classList.add("sel"); }
+    });
+  });
+
+  sheet.querySelector("#fi-save").addEventListener("click", () => {
+    const date = sheet.querySelector("#fi-date").value;
+    const note = sheet.querySelector("#fi-note").value.trim();
+    const custom = sheet.querySelector("#fi-sym-custom").value.trim();
+    const allSyms = [...selSyms, ...custom.split(",").map(s=>s.trim()).filter(Boolean)];
+    const entry = {
+      id: "d_" + Date.now().toString(36),
+      date, mood: selMood, sev: selSev, syms: allSyms, note, t: Date.now()
+    };
+    const diary = STORE.get("diary", []);
+    diary.unshift(entry);
+    STORE.set("diary", diary);
+    sheet.remove();
+    showToast("日記已儲存");
+    render();
+  });
+  sheet.querySelector("#fi-cancel").addEventListener("click", () => sheet.remove());
+  sheet.addEventListener("click", e => { if (e.target === sheet) sheet.remove(); });
+}
+
+/* --- 就診記錄表單 --- */
+function showVisitForm() {
+  const sheet = document.createElement("div");
+  sheet.className = "form-sheet";
+  const today = new Date().toISOString().slice(0,10);
+  const DEPTS = ["家醫科","內科","外科","骨科","神經內科","心臟內科","腸胃科","皮膚科","婦產科","泌尿科","耳鼻喉科","眼科","身心科","急診"];
+
+  sheet.innerHTML = `
+    <div class="form-inner">
+      <div class="form-title">🏥 新增就診紀錄</div>
+      <div class="form-group">
+        <label class="form-label">就診日期</label>
+        <input class="form-input" type="date" id="vi-date" value="${today}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">診所／醫院</label>
+        <input class="form-input" type="text" id="vi-clinic" placeholder="例：台大醫院、附近診所">
+      </div>
+      <div class="form-group">
+        <label class="form-label">科別</label>
+        <select class="form-input" id="vi-dept">
+          <option value="">— 請選擇 —</option>
+          ${DEPTS.map(d=>`<option value="${d}">${d}</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">醫師</label>
+        <input class="form-input" type="text" id="vi-doctor" placeholder="例：王醫師（可不填）">
+      </div>
+      <div class="form-group">
+        <label class="form-label">診斷</label>
+        <input class="form-input" type="text" id="vi-diagnosis" placeholder="例：急性上呼吸道感染">
+      </div>
+      <div class="form-group">
+        <label class="form-label">用藥</label>
+        <input class="form-input" type="text" id="vi-meds" placeholder="例：普拿疼、抗生素（可不填）">
+      </div>
+      <div class="form-group">
+        <label class="form-label">下次回診</label>
+        <input class="form-input" type="date" id="vi-next">
+      </div>
+      <div class="form-group">
+        <label class="form-label">備註</label>
+        <textarea class="form-input" id="vi-note" rows="2" placeholder="醫師建議、注意事項…" style="resize:none"></textarea>
+      </div>
+      <button class="btn-primary lg" id="vi-save" style="margin-bottom:10px">儲存紀錄</button>
+      <button class="btn-ghost" id="vi-cancel">取消</button>
+    </div>
+  `;
+
+  document.body.appendChild(sheet);
+  sheet.querySelector("#vi-save").addEventListener("click", () => {
+    const visit = {
+      id: "v_" + Date.now().toString(36),
+      date: sheet.querySelector("#vi-date").value,
+      clinic: sheet.querySelector("#vi-clinic").value.trim(),
+      dept: sheet.querySelector("#vi-dept").value,
+      doctor: sheet.querySelector("#vi-doctor").value.trim(),
+      diagnosis: sheet.querySelector("#vi-diagnosis").value.trim(),
+      meds: sheet.querySelector("#vi-meds").value.trim(),
+      nextVisit: sheet.querySelector("#vi-next").value,
+      note: sheet.querySelector("#vi-note").value.trim(),
+      t: Date.now()
+    };
+    const visits = STORE.get("visits", []);
+    visits.unshift(visit);
+    STORE.set("visits", visits);
+    sheet.remove();
+    showToast("就診紀錄已儲存");
+    render();
+  });
+  sheet.querySelector("#vi-cancel").addEventListener("click", () => sheet.remove());
+  sheet.addEventListener("click", e => { if (e.target === sheet) sheet.remove(); });
+}
+
+function formatDateShort(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr + "T00:00:00");
+  const today = new Date();
+  const diff = Math.floor((today - d) / 86400000);
+  const mm = d.getMonth()+1, dd = d.getDate();
+  if (diff === 0) return "今天";
+  if (diff === 1) return "昨天";
+  if (d.getFullYear() === today.getFullYear()) return `${mm}/${dd}`;
+  return `${d.getFullYear()}/${mm}/${dd}`;
 }
 
 function emptyState(emoji, title, subtitle) {
@@ -3091,7 +3478,7 @@ function renderBottomNav() {
   el.innerHTML = `
     <button class="nav-btn ${r==='home'?'active':''}" data-go="home">${ICONS.home}<span>首頁</span></button>
     <button class="nav-btn ${r==='browse'?'active':''}" data-go="browse">${ICONS.list}<span>百科</span></button>
-    <button class="nav-btn ${r==='history'?'active':''}" data-go="history">${ICONS.history}<span>紀錄</span></button>
+    <button class="nav-btn ${r==='history'?'active':''}" data-go="history">${ICONS.history}<span>健康</span></button>
     <button class="nav-btn ${r==='profile'?'active':''}" data-go="profile">${ICONS.user}<span>我</span></button>
   `;
   el.querySelectorAll("[data-go]").forEach(b => {
