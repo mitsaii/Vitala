@@ -659,27 +659,43 @@
   .form-input {
     width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px;
     font-size: 15px; color: var(--ink-900); background: #fff; outline: none;
-    font-family: inherit;
+    font-family: inherit; box-sizing: border-box;
   }
   .form-input:focus { border-color: var(--mint-400); }
-  .form-group { margin-bottom: 14px; }
+  .form-group { margin-bottom: 18px; }
+  .form-question { font-size: 15px; font-weight: 600; color: var(--ink-900); margin-bottom: 12px; }
+  .form-hint { font-size: 12.5px; color: var(--ink-400); margin-top: 5px; }
+  /* mood */
+  .mood-row { display: flex; gap: 6px; justify-content: space-between; }
+  .mood-btn {
+    flex: 1; padding: 10px 0; border-radius: 12px; border: 1.5px solid var(--line);
+    font-size: 22px; cursor: pointer; background: #fff; text-align: center;
+    transition: all .15s; line-height: 1;
+  }
+  .mood-btn.sel { border-color: var(--mint-400); background: var(--mint-50); transform: scale(1.08); }
+  /* severity — 3 options */
   .sev-row { display: flex; gap: 8px; }
   .sev-btn {
-    flex: 1; padding: 8px 0; border-radius: 10px; border: 1.5px solid var(--line);
+    flex: 1; padding: 10px 0; border-radius: 12px; border: 1.5px solid var(--line);
     font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
-    background: #fff; color: var(--ink-500);
+    background: #fff; color: var(--ink-500); text-align: center;
   }
   .sev-btn.sel { background: var(--mint-700); color: #fff; border-color: var(--mint-700); }
-  .mood-row { display: flex; gap: 10px; justify-content: center; }
-  .mood-btn { font-size: 26px; cursor: pointer; opacity: .4; transition: opacity .15s, transform .15s; }
-  .mood-btn.sel { opacity: 1; transform: scale(1.2); }
-  .sym-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  /* sym chips */
+  .sym-chips { display: flex; flex-wrap: wrap; gap: 7px; }
   .sym-chip {
-    padding: 5px 12px; border-radius: 99px; border: 1.5px solid var(--line);
-    font-size: 12.5px; font-weight: 500; cursor: pointer; background: #fff; color: var(--ink-700);
+    padding: 6px 13px; border-radius: 99px; border: 1.5px solid var(--line);
+    font-size: 13px; cursor: pointer; background: #fff; color: var(--ink-700);
     transition: all .15s;
   }
   .sym-chip.sel { background: var(--mint-700); color: #fff; border-color: var(--mint-700); }
+  /* diary form date row */
+  .diary-datebar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  }
+  .diary-datebar-label { font-size: 13px; color: var(--ink-400); }
+  .diary-datebar input { border: none; outline: none; font-size: 14px; font-weight: 600; color: var(--mint-700); background: transparent; text-align: right; }
 
   /* ===== Toast ===== */
   .toast {
@@ -3020,47 +3036,55 @@ function showDiaryForm(prefill) {
   sheet.className = "form-sheet";
   const today = new Date().toISOString().slice(0,10);
   let selMood = prefill?.mood || 3;
-  let selSev  = prefill?.sev  || 2;
+  let selSev  = prefill?.sev  || 1;
   let selSyms = new Set(prefill?.syms || []);
+
+  const SEV3 = [
+    { v:1, label:"還好", icon:"🟢" },
+    { v:3, label:"有點不適", icon:"🟡" },
+    { v:5, label:"很不舒服", icon:"🔴" },
+  ];
 
   sheet.innerHTML = `
     <div class="form-inner">
-      <div class="form-title">📋 新增健康日記</div>
-      <div class="form-group">
-        <label class="form-label">日期</label>
-        <input class="form-input" type="date" id="fi-date" value="${prefill?.date||today}">
+      <div class="diary-datebar">
+        <span class="diary-datebar-label">記錄日期</span>
+        <input type="date" id="fi-date" value="${prefill?.date||today}">
       </div>
+
       <div class="form-group">
-        <label class="form-label">心情</label>
+        <div class="form-question">今天心情怎麼樣？</div>
         <div class="mood-row" id="fi-mood">
-          ${MOODS.map((m,i)=>`<span class="mood-btn${selMood===i+1?' sel':''}" data-mood="${i+1}">${m}</span>`).join("")}
+          ${MOODS.map((m,i)=>`<button class="mood-btn${selMood===i+1?' sel':''}" data-mood="${i+1}">${m}</button>`).join("")}
         </div>
       </div>
+
       <div class="form-group">
-        <label class="form-label">狀況嚴重度</label>
+        <div class="form-question">身體狀況</div>
         <div class="sev-row" id="fi-sev">
-          ${[1,2,3,4,5].map(n=>`<button class="sev-btn${selSev===n?' sel':''}" data-sev="${n}">${SEV_LABELS[n]}</button>`).join("")}
+          ${SEV3.map(s=>`<button class="sev-btn${selSev===s.v?' sel':''}" data-sev="${s.v}">${s.icon} ${s.label}</button>`).join("")}
         </div>
       </div>
+
       <div class="form-group">
-        <label class="form-label">症狀（可多選）</label>
+        <div class="form-question">有哪些不舒服？<span style="font-weight:400;color:var(--ink-400);font-size:13px">（可跳過）</span></div>
         <div class="sym-chips" id="fi-syms">
-          ${QUICK_SYMS.map(s=>`<span class="sym-chip${selSyms.has(s)?' sel':''}" data-sym="${s}">${s}</span>`).join("")}
+          ${QUICK_SYMS.map(s=>`<button class="sym-chip${selSyms.has(s)?' sel':''}" data-sym="${s}">${s}</button>`).join("")}
         </div>
-        <input class="form-input" type="text" id="fi-sym-custom" placeholder="其他症狀（用逗號分隔）" style="margin-top:8px" value="${prefill?.customSym||''}">
       </div>
+
       <div class="form-group">
-        <label class="form-label">備註</label>
-        <textarea class="form-input" id="fi-note" rows="3" placeholder="今天的感受、用藥、其他觀察…" style="resize:none">${escapeHtml(prefill?.note||'')}</textarea>
+        <div class="form-question">備註</div>
+        <textarea class="form-input" id="fi-note" rows="4" placeholder="今天吃了什麼藥、去哪看診、有什麼想記錄的…" style="resize:none;line-height:1.6">${prefill?.note ? escapeHtml(prefill.note) : ''}</textarea>
       </div>
-      <button class="btn-primary lg" id="fi-save" style="margin-bottom:10px">儲存日記</button>
+
+      <button class="btn-primary lg" id="fi-save" style="margin-bottom:10px">儲存</button>
       <button class="btn-ghost" id="fi-cancel">取消</button>
     </div>
   `;
 
   document.body.appendChild(sheet);
 
-  // mood
   sheet.querySelectorAll(".mood-btn").forEach(b => {
     b.addEventListener("click", () => {
       selMood = +b.dataset.mood;
@@ -3068,7 +3092,6 @@ function showDiaryForm(prefill) {
       b.classList.add("sel");
     });
   });
-  // severity
   sheet.querySelectorAll(".sev-btn").forEach(b => {
     b.addEventListener("click", () => {
       selSev = +b.dataset.sev;
@@ -3076,7 +3099,6 @@ function showDiaryForm(prefill) {
       b.classList.add("sel");
     });
   });
-  // sym chips
   sheet.querySelectorAll(".sym-chip").forEach(b => {
     b.addEventListener("click", () => {
       const s = b.dataset.sym;
@@ -3088,17 +3110,15 @@ function showDiaryForm(prefill) {
   sheet.querySelector("#fi-save").addEventListener("click", () => {
     const date = sheet.querySelector("#fi-date").value;
     const note = sheet.querySelector("#fi-note").value.trim();
-    const custom = sheet.querySelector("#fi-sym-custom").value.trim();
-    const allSyms = [...selSyms, ...custom.split(",").map(s=>s.trim()).filter(Boolean)];
     const entry = {
       id: "d_" + Date.now().toString(36),
-      date, mood: selMood, sev: selSev, syms: allSyms, note, t: Date.now()
+      date, mood: selMood, sev: selSev, syms: [...selSyms], note, t: Date.now()
     };
     const diary = STORE.get("diary", []);
     diary.unshift(entry);
     STORE.set("diary", diary);
     sheet.remove();
-    showToast("日記已儲存");
+    showToast("已儲存");
     render();
   });
   sheet.querySelector("#fi-cancel").addEventListener("click", () => sheet.remove());
