@@ -2898,7 +2898,8 @@ function renderHistory() {
   fab.className = "add-fab";
   fab.textContent = "+";
   fab.addEventListener("click", () => {
-    if (state.route.tab === "diary") showDiaryForm();
+    const currentTab = state.route.tab || "diary";
+    if (currentTab === "diary") showDiaryForm();
     else showVisitForm();
   });
   app.appendChild(fab);
